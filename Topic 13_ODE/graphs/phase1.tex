@@ -1,0 +1,21 @@
+\documentclass[12pt]{article}
+\usepackage{pst-plot}
+\usepackage{xcolor}
+\usepackage{mathpazo}
+\begin{document}
+	\begin{pspicture}(0,0)(8,8)
+		\psset{algebraic}
+		\psline[arrows=->,arrowscale=2](0,2)(8.5,2)
+		\psline[arrows=->,arrowscale=2](1,0)(1,6)
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{2.5}{3}{2*sin(x/1.5) + 2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{3}{4}{2*sin(x/1.5) + 2}
+		\psplot[linecolor = red]{2.5}{7}{2*sin(x/1.5) + 2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{6}{5}{2*sin(x/1.5) + 2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{7}{6}{2*sin(x/1.5) + 2}
+		\rput(0.5,6){$\dot{x}$}
+		\rput(8.5,1.5){$x$}
+		\rput(5.5,3){\textcolor{red}{$\dot{x} = F(x)$}}
+		\psdot[linecolor = red](4.71,2)
+		\rput(4.5,1.7){\textcolor{red}{$a$}}
+	\end{pspicture}
+\end{document}

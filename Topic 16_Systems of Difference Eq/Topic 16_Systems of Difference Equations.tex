@@ -1,0 +1,323 @@
+\documentclass[10pt,usenames,dvipsnames]{beamer}
+\usetheme{CambridgeUS}
+%\usetheme{Boadilla}
+\definecolor{myred}{RGB}{163,0,0}
+%\usecolortheme[named=`blue]{structure}
+\usecolortheme{dove}
+\usefonttheme[]{professionalfonts}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest,compat/show suggested version=false}
+\usetikzlibrary{arrows,shapes,calc,backgrounds}
+\usepackage{bm}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{verbatim}
+\usepackage{paratype}
+\usepackage{mathpazo}
+\usepackage{listings}
+\usepackage{csvsimple}
+
+\newcommand{\cov}{\mathsf{cov}}
+\newcommand{\corr}{\mathsf{corr}}
+\newcommand{\var}{\mathsf{Var}}
+\newcommand{\plim}{\mathrm{plim\ }}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\Est}{\mathsf{Est.Var}}
+\newcommand{\Asy}{\mathsf{Asy.Var}}
+\newcommand{\Esta}{\mathsf{Est.Asy.Var}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Prob}{\mathrm{Prob}}
+\newcommand{\Med}{\mathsf{Med}}
+\newcommand{\rank}{\mathsf{rank}}
+\newcommand{\argmin}{\mathsf{arg\,min}}
+
+\newcommand{\cc}[1]{\texttt{\textcolor{blue}{#1}}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+
+% Number theorem environments
+\setbeamertemplate{theorem}[ams style]
+\setbeamertemplate{theorems}[numbered]
+
+% Reset theorem-like environments so that each is numbered separately
+\usepackage{etoolbox}
+\undef{\definition}
+\theoremstyle{definition}
+\newtheorem{definition}{\translate{Definition}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+\definecolor{mygray}{RGB}{248,249,250}
+
+% Change colours for theorem-like environments
+\definecolor{mygreen1}{RGB}{0,96,0}
+\definecolor{mygreen2}{RGB}{229,239,229}
+\setbeamercolor{block title}{fg=white,bg=mygreen1}
+\setbeamercolor{block body}{fg=black,bg=mygreen2}
+
+\lstdefinestyle{numbers}{numbers=left, stepnumber=1, numberstyle=\tiny, numbersep=10pt}
+\lstdefinestyle{MyFrame}{backgroundcolor=\color{yellow},frame=shadowbox}
+
+\lstdefinestyle{rstyle}%
+{language=R,
+	basicstyle=\footnotesize\ttfamily,
+	backgroundcolor = \color{mygray},
+	commentstyle=\slshape\color{green!50!black},
+	keywordstyle=\bfseries\color{blue!50!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+	%escapechar=\#,
+	rulecolor = \color{mygray}, 
+	showstringspaces = false,
+	showtabs = false,
+	tabsize = 2,
+	emphstyle=\color{red},
+	frame = single} 
+
+\setbeamertemplate{navigation symbols}{}
+
+\lstset{language=R,frame=single}
+
+\AtBeginSection{\frame{\sectionpage}}
+
+% Remove Section 1, Section 2, etc. as titles in section pages
+\defbeamertemplate{section page}{mine}[1][]{%
+	\begin{centering}
+		{\usebeamerfont{section name}\usebeamercolor[fg]{section name}#1}
+		\vskip1em\par
+		\begin{beamercolorbox}[sep=12pt,center]{part title}
+			\usebeamerfont{section title}\insertsection\par
+		\end{beamercolorbox}
+	\end{centering}
+} 
+
+\setbeamertemplate{section page}[mine]  
+
+\hypersetup{colorlinks, urlcolor=blue, linkcolor = myred} 
+
+\title{R406: Applied Economic Modelling with Python}
+\subtitle{Topic 16: \textcolor{myred}{Systems of Difference Equations}}
+\author{Kaloyan Ganev}
+
+\date{2021/2022} 
+
+\begin{document}
+\maketitle
+
+\begin{frame}[fragile]
+\frametitle{Lecture Contents}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}[fragile]
+\frametitle{Introduction}
+\begin{itemize}
+	\item So far we considered single-variable equations
+	\item Also, we stuck to the autonomous case; we shall do the same in the current topic
+	\item Suppose that instead of having just one equation in one variable, we have the following set of two equations in two variables:
+	\[
+		\begin{array}{lcl}
+			y_{t} = ax_{t-1} + b y_{t-1}\\
+			x_{t} = cx_{t-1} + d y_{t-1}
+		\end{array}
+	\]
+	\item Apparently, this is already a system of difference equations
+	\item Such systems turn out to be very useful in describing relationships among economic variables which are not confined to a single direction of causality
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A note on classification}
+\begin{itemize}
+	\item \textbf{Autonomous} vs. \textbf{non-autonomous} systems were already introduced on-the-fly
+	\item \textbf{Non-homogeneous} systems are those in which at least one equation is non-homogeneous
+	\item Likewise, \textbf{non-linear} systems of equations are the ones in which there is at least one non-linear equation
+	\item As with the single-equation case, we will consider only linear systems
+\end{itemize}
+\end{frame}
+
+\section{Analysis of linear systems of equations}
+\begin{frame}[fragile]
+\frametitle{Matrix form of systems}
+\begin{itemize}
+	\item The simple homogeneous system example given earlier can be written as follows:
+	\[
+		\left[\begin{matrix}
+			x_{t}\\
+			y_{t}
+		\end{matrix}\right] = 
+		\left[\begin{matrix}
+			a & b \\
+			c & d
+		\end{matrix}\right]
+		\left[\begin{matrix}
+			x_{t-1}\\
+			y_{t-1}
+		\end{matrix}\right] \quad (*)
+	\]
+	\item Using matrix shorthand, this is the same as:
+	\[
+		\mathbf{u}_{t} = \mathbf{Au}_{t-1}
+	\]
+	where $\mathbf{u}_{t} = [x_{t},y_{t}]'$, and $\mathbf{A}$ is the coefficient matrix
+	\item By analogy, the non-homogeneous counterpart to this system would look as follows:
+	\[
+		\mathbf{u}_{t} = \mathbf{Au}_{t-1} + \mathbf{b}
+	\]
+	where $\mathbf{b}$ is a vector of conformable size (can be time-dependent but let's forget about this for the time being)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Equilibrium}
+\begin{itemize}
+	\item Take $(*)$ are the reference point
+	\item Equilibrium implies that $x_{t} = x^{*}$ and $y_{t} = y^{*},\, \forall t$
+	\item Therefore, in equilibrium:
+	\[
+		\left[\begin{matrix}
+			x^{*}\\
+			y^{*}
+		\end{matrix}\right] = 
+		\left[\begin{matrix}
+			a & b \\
+			c & d
+		\end{matrix}\right]
+		\left[\begin{matrix}
+			x^{*}\\
+			y^{*}
+		\end{matrix}\right],
+	\]
+	or:
+	\[
+		\mathbf{u}^{*} = \mathbf{Au}^{*}
+	\]
+	\item Move everything to the LHS of the equation:
+	\[
+		\mathbf{u}^{*} - \mathbf{Au}^{*} = \mathbf{0} \Leftrightarrow ( \mathbf{I-A})\mathbf{u}^{*} = \mathbf{0}
+	\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Equilibrium (2)}
+\begin{itemize}
+	\item There are two possibilities: either $\mathbf{u}^{*} = \mathbf{0}$, or $\mathbf{I-A} = \mathbf{0}$
+	\item But $\mathbf{I-A} = \mathbf{0}$ only if $\mathbf{I} = \mathbf{A}$, i.e. $x_{t}$ and $y_{t}$ are unrelated and there is no point considering them in a system
+	\item Therefore, the equilibrium corresponds to  $\mathbf{u}^{*} = \mathbf{0}$
+	\item Now, return to the non-homogeneous system; equilibrium again requires that $\mathbf{u}_{t} = \mathbf{u}^{*},\, \forall t$, i. e.:
+	\[
+		\mathbf{u}^{*} = \mathbf{Au}^{*} + \mathbf{b}
+	\]
+	\item Move everything except $\mathbf{b}$ to the LHS:
+	\[
+		\mathbf{u}^{*} - \mathbf{Au}^{*} = \mathbf{b}
+	\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Equilibrium (3)}
+\begin{itemize}
+	\item This is the same as:
+	\[
+		(\mathbf{I-A})\mathbf{u}^{*} = \mathbf{b}
+	\]
+	\item If $\mathbf{I-A}$ is a non-singular matrix, then the equilibrium of the system is found where:
+	\[
+		\mathbf{u}^{*} = (\mathbf{I-A})^{-1}\mathbf{b}
+	\]
+	\item This looks very much like the result for the single-equation case which shouldn't be surprising
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stability}
+\begin{itemize}
+	\item As in the single-equation case, in order to analyse stability, we need to solve the system
+	\item The procedure that is followed is analogical
+	\item Start with the homogeneous case:
+	\[
+		\mathbf{u}_{t} = \mathbf{Au}_{t-1} = \mathbf{A}(\mathbf{Au}_{t-2}) = \mathbf{A}^{2}\mathbf{u}_{t-2} = \ldots = \mathbf{A}^{t}\mathbf{u}_{0}
+	\]
+	\item In the non-homogeneous case the solution is:
+	\[
+		\mathbf{u}_{t} = \mathbf{A}^{t}\mathbf{u}_{0} + (\mathbf{I + A} + \mathbf{A}^{2} + \ldots + \mathbf{A}^{t-1})\mathbf{b}
+	\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stability (2)}
+\begin{itemize}
+	\item Note that a non-homogeneous system can be reduced to a homogeneous one by expressing it in deviations from equilibrium
+	\item Therefore, after subtracting $\mathbf{u}^{*}$ from both sides of the matrix equation, we have:
+	\[
+		\mathbf{u}_{t} - \mathbf{u}^{*}  = \mathbf{A}(\mathbf{u}_{t-1} - \mathbf{u}^{*})
+	\]
+	\item Denote $\mathbf{z}_{t} = \mathbf{u}_{t} - \mathbf{u}^{*}$; then:
+	\[
+		\mathbf{z}_{t}  = \mathbf{A}\mathbf{z}_{t-1}
+	\]
+	\item This is a first-order homogeneous system
+	\item Therefore, from now on the discussion can proceed with homogeneous systems without losing generality with respect to the non-homogeneous case
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stability (3)}
+\begin{theorem}
+	If the matrix $ \mathbf{A} $ has two distinct eigenvalues $r$ and $s$, then there exists a matrix $ \mathbf{V} = [\mathbf{v}^{r} \quad \mathbf{v}^{s}]$ composed of the eigenvectors corresponding to $r$ and $s$ such that:
+	\[
+		\mathbf{D} = 
+		\left[\begin{matrix}
+			r & 0\\
+			0 & s
+		\end{matrix}\right] = 
+		\mathbf{V}^{-1}\mathbf{AV}
+	\]
+\end{theorem}
+\begin{itemize}
+	\item If we pre-multiply both sides of the Theorem's result by $\mathbf{V}$ and post-multiply them by $\mathbf{V}^{-1}$, we get:
+	\[
+		\mathbf{V}\mathbf{D}\mathbf{V}^{-1} = \mathbf{V}\mathbf{V}^{-1}\mathbf{AV}\mathbf{V}^{-1} = \mathbf{A}
+	\]
+	\item It is also easy to see that $\mathbf{A}^{t} = \mathbf{V}\mathbf{D}^{t}\mathbf{V}^{-1}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stability (3)}
+\begin{itemize}
+	\item Using this, we can write:
+	\[
+		\mathbf{u}_{t} = \mathbf{A}^{t}\mathbf{u}_{0} = \mathbf{V}\mathbf{D}^{t}\mathbf{V}^{-1}\mathbf{u}_{0}
+	\]
+	\item But this can be stated explicitly as follows:
+	\[
+		\mathbf{u}_{t} = \mathbf{V}
+		\left[\begin{matrix}
+			r^{t} & 0\\
+			0 & s^{t}
+		\end{matrix}\right]		
+		\mathbf{V}^{-1}\mathbf{u}_{0}
+	\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Theorems}
+\begin{theorem}
+	A necessary and sufficient condition for the system of difference equations to be globally asymptotically stable is that all eigenvalues of the matrix $\mathbf{A}$ have moduli strictly less than 1.
+\end{theorem}
+
+\begin{theorem}
+	If all eigenvalues of $\mathbf{A}$ have moduli strictly less than 1, the difference equation is globally asymptotically stable and every solution converges to the constant vector $\mathbf{(I - A)}^{-1}\mathbf{b}$.
+\end{theorem}
+\end{frame}
+
+\end{document}

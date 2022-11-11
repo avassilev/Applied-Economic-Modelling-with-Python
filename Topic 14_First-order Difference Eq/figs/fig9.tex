@@ -1,0 +1,38 @@
+\documentclass[12pt]{article}
+%\usepackage{pstricks}
+\usepackage{pst-plot}
+\begin{document}
+	\begin{pspicture}(-1,-1)(10,10)
+		\psline[arrows=->,arrowscale=2](0,0)(10,0)
+		\psline[arrows=->,arrowscale=2](0,0)(0,10)
+		\psline(0.5,0.5)(9,9)
+		\psline(0.5,7)(9,1.5)
+		\rput(-0.5,10){$p$}
+		\rput(10,-0.5){$q$}
+		\rput(-0.3,-0.3){$0$}
+		\rput(9.5,1){$D$}
+		\rput(9.5,9){$S$}
+		\rput(4.45,-0.5){$q^{*}$}
+		\rput(-0.5,4.45){$p^{*}$}
+		\rput(-0.5,7){$p_{0}$}
+		\psline[linestyle=dashed](0,7)(0.5,7)
+		\psline[linewidth=0.1,arrows=->,arrowscale=2](0.5,7)(7,7)
+		\psline[linewidth=0.1,arrows=->,arrowscale=2](7,7)(7,2.8)
+		\psline[linestyle=dashed](7,2.8)(7,0)
+		\rput(7,-0.5){$q_{0}$}
+		\psline[linewidth=0.1,arrows=->,arrowscale=2](7,2.8)(2.8,2.8)
+		\psline[linestyle=dashed](2.8,2.8)(0,2.8)
+		\rput(-0.5,2.8){$p_{1}$}
+		\psline[linestyle=dashed](2.8,2.8)(2.8,0)
+		\rput(2.8,-0.5){$q_{1}$}
+		\psline[linewidth=0.1,arrows=->,arrowscale=2](2.8,2.8)(2.8,5.5)
+		\psline[linestyle=dashed](4.45,0)(4.45,4.45)
+		\psline[linestyle=dashed](0,4.45)(4.45,4.45)
+		\psline[linewidth=0.1,arrows=->,arrowscale=2](2.8,5.5)(5.5,5.5)
+		\psline[linestyle=dashed](0,5.5)(2.8,5.5)
+		\psline[linestyle=dashed](5.5,5.5)(5.5,0)
+		\rput(-0.5,5.5){$p_{2}$}
+		\rput(5.5,-0.5){$q_{2}$}
+		\rput(5,9){$\displaystyle\left|-\frac{\delta}{\beta}\right| < 1$}
+	\end{pspicture}
+\end{document}

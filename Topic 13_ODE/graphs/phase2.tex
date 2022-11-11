@@ -1,0 +1,30 @@
+\documentclass[12pt]{article}
+\usepackage{pst-plot}
+\usepackage{xcolor}
+\usepackage{mathpazo}
+\begin{document}
+	\begin{pspicture}(0,0)(8,8)
+		\psset{algebraic}
+		\psline[arrows=->,arrowscale=2](0,2)(8.5,2)
+		\psline[arrows=->,arrowscale=2](1,0)(1,6)
+		\psplot[linecolor = red]{1.5}{6.5}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{1.5}{2}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{2}{2.2}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{2.2}{2.4}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{3}{2.8}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{3.5}{3.1}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{4}{3.5}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{5.4}{4.9}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{4.9}{4.5}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{5.4}{5.6}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{5.6}{5.8}{(x-4)^2}
+		\psplot[arrows =->,,arrowscale=2, linecolor = red]{5.8}{6}{(x-4)^2}
+		\rput(0.5,6){$\dot{x}$}
+		\rput(8.5,1.5){$x$}
+		\rput(7.5,5.5){\textcolor{red}{$\dot{x} = F(x)$}}
+		\psdot[linecolor = red](5.41,2)
+		\psdot[linecolor = red](2.59,2)
+		\rput(2.4,1.7){\textcolor{red}{$a_{1}$}}
+		\rput(5.7,1.7){\textcolor{red}{$a_{2}$}}
+	\end{pspicture}
+\end{document}
