@@ -99,10 +99,11 @@
 \hypersetup{colorlinks, urlcolor=blue, linkcolor = myred} 
 
 \title{R406: Applied Economic Modelling with Python}
-\subtitle{Lecture 14: \textcolor{myred}{First-order Difference Equations}}
-\author{Kaloyan Ganev}
+\subtitle{\textcolor{myred}{First-order Difference Equations}}
+\author[Kaloyan Ganev,  Andrey Vassilev]{Kaloyan Ganev (main author) \\
+Andrey Vassilev (minor modifications)}
 
-\date{2021/2022} 
+\date{} 
 
 \begin{document}
 \maketitle
@@ -117,108 +118,142 @@
 \begin{frame}[fragile]
 \frametitle{Discrete Time}
 \begin{itemize}
-	\item Differential equations describe economic dynamics in continuous time
-	\item Derivatives measuring instantaneous rates of change, accelerations, decelerations, etc., are used in them
+%	\item Differential equations describe economic dynamics in continuous time
+%	\item Derivatives measuring instantaneous rates of change, accelerations, decelerations, etc., are used in them
+	\item In many cases a variable of interest can be determined from its past values (as well as potentially other quantities)
+	\item Examples
+		\begin{itemize}
+		\item The end-period balance of a bank account can be computed from the starting balance plus deposits/withdrawals and interest
+		\item The stock of capital at a point in time is determined by the stock from the previous period, investment and depreciation
+		\end{itemize}
 	\item Here we consider the case of discrete time: $t$ takes only integer values:
 	\[
 		t = \ldots, -3, -2, -1, 0, 1, 2, 3,\ldots
 	\]
-	\item Changes of variables are no longer instantaneous, so derivatives are not adequate in the description of dynamics
-	\item The notion of differences is much more appropriate, therefore the term \textcolor{red}{\emph{difference equations}}
+%	\item Changes of variables are no longer instantaneous, so derivatives are not adequate in the description of dynamics
+%	\item The notion of differences is much more appropriate, therefore the term \textcolor{red}{\emph{difference equations}}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{A Word on Notation}
-\begin{itemize}
-	\item The integer values that the time variable takes serve to index economic variables 
-	\item Each different value indexes a separate period for which information on the respective economic variable is recorded
-	\item We make a slight change of notation from differential equations so that we take into account the above
-	\item Instead of writing:
-	\[
-		\dot{y}(t)
-	\]
-	to describe the (instantaneous) change of $x$, here we write:
-	\[
-		\textcolor{red}{\Delta y_{t}}\quad ( = y_{t} - y_{t-1})
-	\]
-	to describe the change of $x$ between two consecutive periods (or, the per-unit-of-time change)
-\end{itemize}
-\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{A Word on Notation}
+%\begin{itemize}
+%	\item The integer values that the time variable takes serve to index economic variables 
+%	\item Each different value indexes a separate period for which information on the respective economic variable is recorded
+%	\item We make a slight change of notation from differential equations so that we take into account the above
+%	\item Instead of writing:
+%	\[
+%		\dot{y}(t)
+%	\]
+%	to describe the (instantaneous) change of $x$, here we write:
+%	\[
+%		\textcolor{red}{\Delta y_{t}}\quad ( = y_{t} - y_{t-1})
+%	\]
+%	to describe the change of $x$ between two consecutive periods (or, the per-unit-of-time change)
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\frametitle{A Word on Notation (2)}
+%\begin{itemize}
+%	\item Analogies to higher-order derivatives are easily made
+%	\item For example, the second derivative of $x$ (in the continuous case), $\ddot{x}(t)$, is matched by:
+%	\[
+%		\Delta^{2}y_{t} = \Delta y_{t} - \Delta y_{t-1}
+%	\]
+%	\item The latter is also interpreted as acceleration
+%	\item The same line of reasoning is then further extended to third differences, fourth differences, etc.
+%\end{itemize}
+%\end{frame}
 
 \begin{frame}[fragile]
-\frametitle{A Word on Notation (2)}
-\begin{itemize}
-	\item Analogies to higher-order derivatives are easily made
-	\item For example, the second derivative of $x$ (in the continuous case), $\ddot{x}(t)$, is matched by:
-	\[
-		\Delta^{2}y_{t} = \Delta y_{t} - \Delta y_{t-1}
-	\]
-	\item The latter is also interpreted as acceleration
-	\item The same line of reasoning is then further extended to third differences, fourth differences, etc.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{What Are Difference Equations?}
-\begin{itemize}
-	\item By analogy to differential equations (where derivatives are included), difference equations are equations in which differences of variables are included
-	\item The order of differences defines the order of equations
-	\item Examples:
-	\[
-		\begin{array}{lcl}
-			\Delta y_{t} = 8,\\
-			\Delta y_{t} = 0.4y_{t} + 2t + 3
-		\end{array}
-	\]
-	are first-order difference equations, while
-	\[
-		\begin{array}{lcl}
-			\Delta^{2}y_{t} = 0.5y_{t} - 11y_{t-1}
-		\end{array}
-	\]
-	is a second-order difference equation
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{What Are Difference Equations? (2)}
-\begin{itemize}
-	\item Take, for example, the equation:
-	\[
-		\Delta y_{t+1} = 0.6y_{t} - 21
-	\]
-	and recall the definition of differences (through deltas)
-	\item If we leave on the left-hand side the variable with the largest index, and move all the rest to the right-hand side, we have:
-	\[
-		y_{t+1} =  1.6y_{t} - 21
-	\]
-	\item This shows that the value at time $(t+1)$ can be thought of as a function of the value at time $t$ (and possibly some other stuff, such as time independently, or another variable)
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{What Are Difference Equations? (3)}
-\begin{itemize}
-	\item This leads to the idea that in general the difference equation can be stated as a function relating the variable to its own past values
-	\item Formally written,
-	\[
+	\frametitle{What Are Difference Equations?}
+	\begin{itemize}
+		\item In general a difference equation can be stated as a function relating the variable to its own past values
+		\item Formally written,
+		\[
 		y_{t+1} = f(y_{t},y_{t-1},\ldots)
-	\]
-	\item We call this a \emph{recursive relationship}
-	\item Every next value is obtained from this relationship; for example, in the relationship $y_{t+1} = f(y_{t})$:
-	\[
+		\]
+		\item We call this a \emph{recursive relationship}
+		\item Every next value is obtained from this relationship; for example, in the relationship $y_{t+1} = f(y_{t})$:
+		\[
 		y_{t+2} = f(y_{t+1}) = f(f(y_{t})) = f^{2}(y_{t})
-	\]
-	\item From this follows:
-	\[
+		\]
+		\item From this follows:
+		\[
 		y_{t+k} = f^{k}(y_{t})
-	\]
-	
-	\textcolor{orange}{Note: }\textcolor{magenta}{$k$ is not interpreted as a power!}
-	
-\end{itemize}
+		\]
+		
+		\textcolor{orange}{Note: }\textcolor{magenta}{$k$ is not interpreted as a power!}
+		
+	\end{itemize}
 \end{frame}
+
+%\begin{frame}[fragile]
+%\frametitle{What Are Difference Equations?}
+%\begin{itemize}
+%	\item By analogy to differential equations (where derivatives are included), difference equations are equations in which differences of variables are included
+%	\item The order of differences defines the order of equations
+%	\item Examples:
+%	\[
+%		\begin{array}{lcl}
+%			\Delta y_{t} = 8,\\
+%			\Delta y_{t} = 0.4y_{t} + 2t + 3
+%		\end{array}
+%	\]
+%	are first-order difference equations, while
+%	\[
+%		\begin{array}{lcl}
+%			\Delta^{2}y_{t} = 0.5y_{t} - 11y_{t-1}
+%		\end{array}
+%	\]
+%	is a second-order difference equation
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\frametitle{What Are Difference Equations? (2)}
+%\begin{itemize}
+%	\item Take, for example, the equation:
+%	\[
+%		\Delta y_{t+1} = 0.6y_{t} - 21
+%	\]
+%	and recall the definition of differences (through deltas)
+%	\item If we leave on the left-hand side the variable with the largest index, and move all the rest to the right-hand side, we have:
+%	\[
+%		y_{t+1} =  1.6y_{t} - 21
+%	\]
+%	\item This shows that the value at time $(t+1)$ can be thought of as a function of the value at time $t$ (and possibly some other stuff, such as time independently, or another variable)
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{What Are Difference Equations? (2)}
+	\begin{itemize}
+		\item Sometimes difference equations are written in more general, \textbf{implicit} form as \[ F(y_{t+1},y_t,y_{t-1},\ldots)=0. \]
+		We shall ignore such cases and work with \textbf{explicit} difference equations, i.e. ones that can be solved for the variable with the largest index
+		\item The order of a difference equation is given by the difference between the largest and the smallest time indexes
+		\item For example, the equation
+		\[ y_{t+1} = f(y_t, y_{t-1}, y_{t-2}) \]
+		is a third-order equation because $(t+1) - (t-2) = 3$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{What Are Difference Equations? (3)}
+	\begin{itemize}
+		\item A difference equation, e.g. \[ y_{t+1} = f(y_t), \] 
+		can be re-written as 
+		\[ y_{t+1} - y_t = f(y_t) - y_t. \] 
+		\item We can define the (first) difference as $ \Delta y_{t} := y_{t} - y_{t-1} $
+	and a new right-hand side $ g(y):= f(y)-y$
+		\item The above equation can then be written as 
+		\[ \Delta y_{t+1} = g(y_t), \]
+		hence the name \textit{difference equation}
+		\item While you may not see immediate benefits from writing the equation to feature an explicit difference operator $ \Delta $, this form becomes useful to motivate the transition to differential equations
+	\end{itemize}
+\end{frame}
+
 
 \subsection{Classification}
 \begin{frame}[fragile]
@@ -329,7 +364,7 @@ Let $y^{*}$ be an equilibrium point of $f$. Some definitions follow.
 \begin{definition}
 	The point $y^{*}$ is \textbf{stable} if for any $\varepsilon > 0\,\exists\, \delta > 0$:
 \[
-	|y_{0} - y^{*}| < \varepsilon \Rightarrow |f^{n}(y_{0}) - f(y^{*})| < \delta, \, \forall n > 0.
+	|y_{0} - y^{*}| < \delta \Rightarrow |f^{n}(y_{0}) - y^{*}| < \varepsilon, \, \forall n > 0.
 \]
 
 Otherwise, $y^{*}$ is \textbf{unstable}.
@@ -338,7 +373,7 @@ Otherwise, $y^{*}$ is \textbf{unstable}.
 \begin{definition}
 	The point $y^{*}$ is \textbf{repelling} if $\exists\,\varepsilon > 0$:
 \[
-	0 < |y_{0} - y^{*}| < \varepsilon \Rightarrow |f(y_{0}) - f(y^{*})| > |y_{0} - y^{*}|.
+	0 < |y_{0} - y^{*}| < \varepsilon \Rightarrow |f(y_{0}) - y^{*}| > |y_{0} - y^{*}|.
 \]
 \end{definition}
 \end{frame}
@@ -470,7 +505,7 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 \begin{frame}[fragile]
 \frametitle{Solution}
 \begin{itemize}
-	\item Start with the non-homogeneous, constant-coefficients case:
+	\item Start with the linear non-homogeneous, constant-coefficients case:
 	\[
 		\left|
 		\begin{array}{lcl}
@@ -728,9 +763,9 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 \frametitle{Example 4: Hog Cycles and Cobwebs}
 \begin{itemize}
 	\item Based on the fact that for various commodities output and prices exhibit cyclical behaviour  
-	\item Cycles stem from the consecutive adjustments which are manifested as movements between the supply and demand curve
+	\item Cycles stem from the consecutive adjustments, which are manifested as movements between the supply and demand curve
 	\item Also, from the technological perspective, there is a span of time required in order to produce a certain output (e.g. in agriculture)
-	\item Generally speaking, the ``cobweb phenomenon'' stem from the presence of lagged effects on some economic variables
+	\item Generally speaking, the ``cobweb phenomenon'' stems from the presence of lagged effects on some economic variables
 	\item Also, there is a mismatch between the time of the production decision and the time of purchase decisions by customers (demand)
 \end{itemize}
 \end{frame}
