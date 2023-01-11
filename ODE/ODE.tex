@@ -116,6 +116,33 @@
 \section{Introduction}
 \subsection{Definition of Concepts}
 \begin{frame}[fragile]
+	\frametitle{From difference to differential equations} % Based on Ph. Michel, Cours de mathématiques pour économistes
+	\framesubtitle{}
+		\begin{itemize}
+		\item To provide an intuitive motivation for differential equations, consider a situation where we have a quantity of interest $ y(t) $ that evolves in  continuous time
+		\item However, this quantity is observed at discrete points in time and we can choose the step between adjacent observations
+		\item Given a time step $ h $, our observations are recorded at times $\tau,~ \tau+h,~ \tau+2h,~\tau+3h,~ \ldots$
+		\item The above can always be re-labelled to ``lose'' the time step by setting \[ t+k = \tau + kh, ~ k=0,1,2,\ldots \]
+		
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{From difference to differential equations (2)}
+	\framesubtitle{}
+	\begin{itemize}
+		\item Assume that such a process can be described by a difference equation of the form
+		\[ \dfrac{1}{h}(y_{s+1}-y_s) = f(y_s) \] i.e.
+		\[ \dfrac{1}{h}(y_{t+h}-y_t) = f(y_t) \]
+		\item If we let the time step $ h $ tend to 0, i.e. we observe with increasing frequency, the left-hand side will tend to the derivative $ \dot{y}(t) := \dfrac{dy(t)}{dt} $
+		\item In the limit, the recursive relationship will change to a relationship the form \[ \dot{y}(t) = f(y(t)) \]
+		\item The last expression is a relationship between an unknown function $ y(t) $ and its first derivative
+	\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
 \frametitle{What is a Differential Equation?}
 \begin{definition}
 	A differential equation is an equation that relates an unknown function with one or more of its derivatives.
@@ -858,11 +885,11 @@
 	\item \textbf{Case 1:} $f(t) = A = const$
 	\item The first step is to check whether the particular solution is a constant, i.e. $u^{*} = c$
 	\item If so, then $\dot{u}^{*} = \ddot{u}^{*} = 0$, and the equation reduces to $bc = A \Rightarrow c = A/b$
-	\item Therefore, for $b \neq 0$ the particular solution of 
+	\item Therefore, for $b \neq 0$ a particular solution of 
 	\[
 		\ddot{x} + a\dot{x} + bx = A
 	\]
-	has the particular solution
+	is the constant function
 	\[
 		u^{*} = A/b
 	\]
