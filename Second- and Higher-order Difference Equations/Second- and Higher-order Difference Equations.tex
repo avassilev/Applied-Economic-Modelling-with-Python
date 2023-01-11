@@ -190,14 +190,14 @@
 	\[
 		y_{t+2} + ay_{t+1} + by_{t} = 0
 	\]
-	\item Note first that if we set $y_{t} = e^{rt}$, then we would have $y_{t+1} = e^{r(t+1)} = e^{rt}e^{r}$ and $y_{t+2} = e^{r(t+2)} = e^{rt}e^{2r}$
+	\item Note first that if we set $y_{t} = m^{t}$ and ignore the trivial case $ m=0 $, then we would have $y_{t+1} = m^{t+1} = m^{t}m$ and $y_{t+2} = m^{t+2} = m^t m^{2}$
 	\item Plug these expressions in the equation:
 	\[
-		e^{rt}e^{2r} + ae^{rt}e^{r} + be^{rt} = 0
+		m^{t}m^{2} + am^{t}m + bm^{t} = 0
 	\]
 	\item This can also be written as:
 	\[
-		e^{rt}(e^{2r} + ae^{r} + b) = 0
+		m^{t}(m^{2} + am + b) = 0
 	\] 
 \end{itemize}
 \end{frame}
@@ -205,16 +205,12 @@
 \begin{frame}[fragile]
 \frametitle{Constant coefficients (2)}
 \begin{itemize}
-	\item $e^{rt}$ is always positive, so we can divide both sides by it to get:
-	\[
-		e^{2r} + ae^{r} + b = 0
-	\]
-	\item If we put $m = e^{r}$, then we need to solve practically the following quadratic equation:
+	\item Since we have $ m \neq 0 $, we can divide both sides by $ m^t $ to get:
 	\[
 		m^{2} + am + b = 0
 	\]
 	\item This is the \textbf{characteristic equation} of the difference equation
-	\item Its solutions will provide us with the values of $m$ that make $e^{rt}$ also a solution
+	\item Its solutions will provide us with the values of $m$ that can be used to construct the general solution of $(**)$
 \end{itemize}
 \end{frame}
 
@@ -745,7 +741,7 @@ The general rules that are followed in finding the roots are as follows:
 \begin{frame}[fragile]
 \frametitle{Stability conditions for higher-order equations}
 \begin{theorem}
-	A necessary and sufficient condition for the $p$th order linear difference equation is that the roots of the characteristic polynomial all lie within the unit circle, i. e. all have moduli less than 1.
+	A necessary and sufficient condition for the $p$th order linear difference equation to be globally asymptotically stable is that the roots of the characteristic polynomial all lie within the unit circle, i.e. all have moduli less than 1.
 \end{theorem}
 \end{frame}
 
