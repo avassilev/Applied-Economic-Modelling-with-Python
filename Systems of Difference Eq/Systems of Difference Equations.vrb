@@ -1,8 +1,0 @@
-\frametitle{Theorems}
-\begin{theorem}
-	A necessary and sufficient condition for the system of difference equations to be globally asymptotically stable is that all eigenvalues of the matrix $\mathbf{A}$ have moduli strictly less than 1.
-\end{theorem}
-
-\begin{theorem}
-	If all eigenvalues of $\mathbf{A}$ have moduli strictly less than 1, the difference equation is globally asymptotically stable and every solution converges to the constant vector $\mathbf{(I - A)}^{-1}\mathbf{b}$.
-\end{theorem}
