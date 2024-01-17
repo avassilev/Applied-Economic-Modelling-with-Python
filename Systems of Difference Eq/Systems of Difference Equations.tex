@@ -207,9 +207,7 @@
 \begin{frame}[fragile]
 \frametitle{Equilibrium (2)}
 \begin{itemize}
-	\item There are two possibilities: either $\mathbf{u}^{*} = \mathbf{0}$, or $\mathbf{I-A} = \mathbf{0}$
-	\item But $\mathbf{I-A} = \mathbf{0}$ only if $\mathbf{I} = \mathbf{A}$, i.e. $x_{t}$ and $y_{t}$ are unrelated and there is no point considering them in a system
-	\item Therefore, the equilibrium corresponds to  $\mathbf{u}^{*} = \mathbf{0}$
+	\item If $\mathbf{I-A}$ is a non-singular matrix, the equilibrium corresponds to  $\mathbf{u}^{*} = \mathbf{0}$
 	\item Now, return to the non-homogeneous system; equilibrium again requires that $\mathbf{u}_{t} = \mathbf{u}^{*},\, \forall t$, i. e.:
 	\[
 		\mathbf{u}^{*} = \mathbf{Au}^{*} + \mathbf{b}
@@ -329,7 +327,7 @@
 		\item Consider the non-autonomous equation \[ y_{t+1} = f(t, y_{t}), \quad t = 0, 1, 2, \ldots \]
 		\item We can introduce a variable $ x_t $ and consider the modified system 
 			\[
-		\begin{array}{lcl}
+		\begin{array}{l}
 			y_{t+1} = f(x_t, y_t)\\
 			x_{t+1} = x_t + 1
 		\end{array}
@@ -339,11 +337,46 @@
 	\end{itemize}
 \end{frame}
 
-%\begin{frame}[fragile]
-%	\frametitle{Order reduction}
-%	\framesubtitle{}
-%		\begin{itemize}
-%		\item Consider the equation \[ y_{t+p} = f(t, y_{t}, y_{t+1}, \ldots, y_{t+p-1}), \quad t = 0, 1, 2, \ldots \]
-%	\end{itemize}
-%\end{frame}
+\begin{frame}[fragile]
+	\frametitle{Order reduction}
+	\framesubtitle{}
+		\begin{itemize}
+		\item Consider the equation \begin{equation}
+			y_{t+p} = f(y_{t}, y_{t+1}, \ldots, y_{t+p-1}), \quad t = 0, 1, 2, \ldots
+			\label{eq:pthorder}
+		\end{equation} 
+		\item Introduce the following variables
+		\[
+		\begin{array}{lll}
+			x_{1,t} & = & y_t\\
+			x_{2,t} & = & y_{t+1}\\
+			x_{3,t} & = & y_{t+2}\\
+			& \cdots &\\
+			x_{p,t} & = & y_{t+p-1}
+		\end{array}
+		\]
+		\item Then we can write the system
+		\begin{equation}
+					\begin{array}{lll}
+				x_{1,t+1} & = & x_{2,t}\\
+				x_{2,t+1} & = & x_{3,t}\\
+				& \cdots &\\
+				x_{p-1,t+1} & = & x_{p,t}\\
+				x_{p,t+1} & = & f(x_{1,t},x_{2,t},\ldots,x_{p,t})
+			\end{array}
+			\label{eq:pdimsys}
+		\end{equation}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Order reduction (2)}
+	\framesubtitle{}
+	\begin{itemize}
+		\item This approach trades the $p$-th order equation \eqref{eq:pthorder} for the first-order system of $p$ equations \eqref{eq:pdimsys}
+		\item The representation of a problem as a system of equations can be more convenient to work with in certain cases
+	\end{itemize}
+\end{frame}
+
+
 \end{document}
