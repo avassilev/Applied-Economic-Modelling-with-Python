@@ -250,7 +250,7 @@
 \begin{frame}[fragile]
 \frametitle{The solutions of the characteristic equation (3)}
 \begin{itemize}
-	\item First, we note that we need two initial values of $y_{t}$ to solve the equation
+	\item First, we note that in order to obtain a particular solution to the difference equation, we need two initial values of $y_{t}$
 	\item If those two values are given, say $y_{0}$ and $y_{1}$, then the constants $A$ and $B$ are uniquely determined
 	\item In the case when the solutions are complex conjugates, the fact that they contain sines and cosines implies that they characterize cyclical behaviour (oscillations)
 	\item The value of the radius (modulus) $R$ determines the type of cyclical fluctuations:
@@ -274,7 +274,7 @@
 		y_{t} = Au_{t}^{(1)} + Bu_{t}^{(2)} + u_{t}^{*}
 	\]
 	where $u_{t}^{*}$ is a particular solution of ($\spadesuit$)
-	\item It turns out that finding $u_{t}^{*}$ is a very difficult task even if $c_{t}$ is a relatively simple function
+	\item It turns out that finding $u_{t}^{*}$ is a difficult task even if $c_{t}$ is a relatively simple function
 \end{itemize}
 \end{frame}
 
@@ -363,7 +363,7 @@
 \begin{frame}[fragile]
 \frametitle{Stability of solutions}
 \begin{itemize}
-	\item Generally speaking, a discrete dynamic system is \textbf{stable} if whatever changes are made to the initial conditions, eventually their effect vanishes as $t \to \infty$
+	\item Intuitively speaking, a discrete dynamic system is \textbf{stable} if whenever small changes are made to the initial conditions, typically around an equilibrium point, the solution remains ``near'' the equilibrium point
 	\item Otherwise (i.e. when even small changes might lead to large differences in long-term behaviour) the system is \textbf{unstable}
 	\item Returning to $(\heartsuit)$, it is called \textbf{globally asymptotically stable} if the solution of its associated homogeneous equation tends to 0 as $t \to \infty$
 \end{itemize}
@@ -371,7 +371,7 @@
 \begin{theorem}
 	The equation $(\heartsuit)$ is globally asymptotically stable iff the following two equivalent conditions are satisfied:
 	\begin{itemize}
-		\item[(A)] The moduli of the roots of the characteristic equation $m^{2} + am + b = 0$ are strictly lower than 1
+		\item[(A)] The moduli of the roots of the characteristic equation $m^{2} + am + b = 0$ are strictly less than 1
 		\item[(B)] $|a| < 1 + b$ and $|b| < 1$
 	\end{itemize}
 \end{theorem}
@@ -678,7 +678,7 @@
 	\[
 		y_{t} = C_{1}u_{t}^{(1)} + \ldots + C_{p}u_{t}^{(p)}
 	\]
-	where $u_{t}^{(1)}, \ldots, u_{t}^{(p)}$ are $p$ linearly independent solutions of the characteristic equation, and $C_{1}, \ldots, C_{p}$ are arbitrary constants.
+	where $u_{t}^{(1)}, \ldots, u_{t}^{(p)}$ are $p$ linearly independent solutions of the equation, and $C_{1}, \ldots, C_{p}$ are arbitrary constants.
 \end{theorem}
 \end{frame}
 
