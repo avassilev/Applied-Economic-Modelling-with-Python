@@ -44,10 +44,12 @@
 \setbeamertemplate{theorems}[numbered]
 
 % Reset theorem-like environments so that each is numbered separately
-\usepackage{etoolbox}
-\undef{\definition}
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
-\newtheorem{definition}{\translate{Definition}}
+\newtheorem{defn}{\translate{Definition}}
 
 \definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
 \definecolor{mygray}{RGB}{248,249,250}
@@ -269,7 +271,7 @@
 
 \begin{frame}[fragile]
 \frametitle{Stability (3)}
-\begin{theorem}
+\begin{thm}
 	If the matrix $ \mathbf{A} $ has two distinct eigenvalues $r$ and $s$, then there exists a matrix $ \mathbf{V} = [\mathbf{v}^{r} \quad \mathbf{v}^{s}]$ composed of the eigenvectors corresponding to $r$ and $s$ such that:
 	\[
 		\mathbf{D} = 
@@ -279,7 +281,7 @@
 		\end{matrix}\right] = 
 		\mathbf{V}^{-1}\mathbf{AV}
 	\]
-\end{theorem}
+\end{thm}
 \begin{itemize}
 	\item If we pre-multiply both sides of the Theorem's result by $\mathbf{V}$ and post-multiply them by $\mathbf{V}^{-1}$, we get:
 	\[
@@ -310,13 +312,13 @@
 
 \begin{frame}[fragile]
 \frametitle{Theorems}
-\begin{theorem}
+\begin{thm}
 	A necessary and sufficient condition for the system of difference equations to be globally asymptotically stable is that all eigenvalues of the matrix $\mathbf{A}$ have moduli strictly less than 1.
-\end{theorem}
+\end{thm}
 
-\begin{theorem}
+\begin{thm}
 	If all eigenvalues of $\mathbf{A}$ have moduli strictly less than 1, the difference equation is globally asymptotically stable and every solution converges to the constant vector $\mathbf{(I - A)}^{-1}\mathbf{b}$.
-\end{theorem}
+\end{thm}
 \end{frame}
 
 
@@ -373,7 +375,7 @@
 	\frametitle{Order reduction (2)}
 	\framesubtitle{}
 	\begin{itemize}
-		\item This approach trades the $p$-th order equation \eqref{eq:pthorder} for the first-order system of $p$ equations \eqref{eq:pdimsys}
+		\item This approach trades the $p$th-order equation \eqref{eq:pthorder} for the first-order system of $p$ equations \eqref{eq:pdimsys}
 		\item The representation of a problem as a system of equations can be more convenient to work with in certain cases
 	\end{itemize}
 \end{frame}
