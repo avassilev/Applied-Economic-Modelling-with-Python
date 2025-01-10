@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 \documentclass[10pt,usenames,dvipsnames]{beamer}
 \usetheme{CambridgeUS}
 %\usetheme{Boadilla}
@@ -44,10 +45,12 @@
 \setbeamertemplate{theorems}[numbered]
 
 % Reset theorem-like environments so that each is numbered separately
-\usepackage{etoolbox}
-\undef{\definition}
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
-\newtheorem{definition}{\translate{Definition}}
+\newtheorem{defn}{\translate{Definition}}
 
 \definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
 \definecolor{mygray}{RGB}{248,249,250}
@@ -155,26 +158,26 @@
 
 \begin{frame}[fragile]
 \frametitle{Two theorems}
-\begin{theorem}
+\begin{thm}
 	The solution of the homogeneous equation $(**)$ is:
 	\[
 		y_{t} = Au_{t}^{(1)} + Bu_{t}^{(2)}
 	\]
 	
 	where $u_{t}^{(1)}$ and $u_{t}^{(2)}$ are two linearly independent solutions and $A$ and $B$ are arbitrary constants.
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Two theorems (2)}
-\begin{theorem}
+\begin{thm}
 	The solution of the non-homogeneous equation $(*)$ is:
 	\[
 		y_{t} = Au_{t}^{(1)} + Bu_{t}^{(2)} + u_{t}^{*}
 	\]
 	
 	where $Au_{t}^{(1)} + Bu_{t}^{(2)}$ is the general solution to $(**)$ and $u_{t}^{*}$ is any particular solution of $(*)$.
-\end{theorem}
+\end{thm}
 
 \begin{itemize}
 %	\item There is no universal method of finding two linearly independent solutions to the non-homogeneous equation
@@ -228,7 +231,7 @@
 
 \begin{frame}[fragile]
 \frametitle{The solutions of the characteristic equation (2)}
-\begin{theorem}
+\begin{thm}
 	The general solution of $(**)$ when $b \neq 0$ is as follows:
 	\begin{enumerate}
 	 	\item If $D > 0$ (two distinct real roots of the characteristic equation) then:
@@ -244,7 +247,7 @@
 	 		y_{t} = R^{t}(A\cos(\theta t) + B\sin(\theta t)), \quad R = \sqrt{b},\, \cos(\theta) = -\frac{a}{2\sqrt{b}},\, \theta \in [0,\pi]
 	 	\]
 	\end{enumerate} 
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -286,7 +289,7 @@
 	\[
 		y_{t+2} + a y_{t+1} + b y_{t} = c, \quad b \neq 0 \quad (\heartsuit)
 	\]
-	\item So, we have to find a solution of the form: $y_{t} = C$, where $C = const$
+	\item So, we try to find a solution of the form: $y_{t} = C$, where $C = const$
 	\item If $y_{t} = C$, then $y_{t+1} = y_{t+2} = C$. Substitute all these in $(\heartsuit)$ to get:
 	\[
 		C + a C + b C = c \Leftrightarrow C(1 + a + b) = c
@@ -368,13 +371,13 @@
 	\item Returning to $(\heartsuit)$, it is called \textbf{globally asymptotically stable} if the solution of its associated homogeneous equation tends to 0 as $t \to \infty$
 \end{itemize}
 
-\begin{theorem}
+\begin{thm}
 	The equation $(\heartsuit)$ is globally asymptotically stable iff the following two equivalent conditions are satisfied:
 	\begin{itemize}
 		\item[(A)] The moduli of the roots of the characteristic equation $m^{2} + am + b = 0$ are strictly less than 1
 		\item[(B)] $|a| < 1 + b$ and $|b| < 1$
 	\end{itemize}
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -669,32 +672,32 @@
 
 \begin{frame}[fragile]
 \frametitle{Higher-order equations: The linear case}
-\begin{theorem}
+\begin{thm}
 	The  $p$th-order linear homogeneous difference equation:
 	\[
-		y_{t+p} + a_{1}(t)y_{t+p-1} + \ldots + a_{p-1}(t)y_{t+1} + a_{p}(t)y_{t} = 0, \quad a_{p}(t) \neq 0
+			y_{t+p} + a_{1,t} \, y_{t+p-1} + \ldots + a_{p-1,t} \, y_{t+1} + a_{p,t} \, y_{t} = 0, \quad a_{p,t} \neq 0
 	\]
 	has the following solution:
 	\[
 		y_{t} = C_{1}u_{t}^{(1)} + \ldots + C_{p}u_{t}^{(p)}
 	\]
 	where $u_{t}^{(1)}, \ldots, u_{t}^{(p)}$ are $p$ linearly independent solutions of the equation, and $C_{1}, \ldots, C_{p}$ are arbitrary constants.
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Higher-order equations: The linear case (2)}
-\begin{theorem}
+\begin{thm}
 	The  $p$th-order linear non-homogeneous difference equation:
 	\[
-		y_{t+p} + a_{1}(t)y_{t+p-1} + \ldots + a_{p-1}(t)y_{t+1} + a_{p}(t)y_{t} = b_{t}, \quad a_{p}(t) \neq 0
+		y_{t+p} + a_{1,t} \, y_{t+p-1} + \ldots + a_{p-1,t} \, y_{t+1} + a_{p,t} \, y_{t} = b_{t}, \quad a_{p,t} \neq 0
 	\]
 	has the following solution:
 	\[
 		y_{t} = C_{1}u_{t}^{(1)} + \ldots + C_{p}u_{t}^{(p)} + u_{t}^{*}
 	\]
 	where $C_{1}u_{t}^{(1)} + \ldots + C_{p}u_{t}^{(p)}$ is the general solution of the homogeneous equation, and $u_{t}^{*}$ is a particular solution of the non-homogeneous equation
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -740,9 +743,9 @@ The general rules that are followed in finding the roots are as follows:
 
 \begin{frame}[fragile]
 \frametitle{Stability conditions for higher-order equations}
-\begin{theorem}
-	A necessary and sufficient condition for the $p$th order linear difference equation to be globally asymptotically stable is that the roots of the characteristic polynomial all lie within the unit circle, i.e. all have moduli less than 1.
-\end{theorem}
+\begin{thm}
+	A necessary and sufficient condition for the $p$th-order linear difference equation to be globally asymptotically stable is that the roots of the characteristic polynomial all lie within the unit circle, i.e. all have moduli less than 1.
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]

@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 \documentclass[10pt,usenames,dvipsnames]{beamer}
 \usetheme{CambridgeUS}
 %\usetheme{Boadilla}
@@ -44,10 +45,12 @@
 \setbeamertemplate{theorems}[numbered]
 
 % Reset theorem-like environments so that each is numbered separately
-\usepackage{etoolbox}
-\undef{\definition}
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
-\newtheorem{definition}{\translate{Definition}}
+\newtheorem{defn}{\translate{Definition}}
 
 \definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
 \definecolor{mygray}{RGB}{248,249,250}
@@ -338,9 +341,10 @@ Andrey Vassilev (minor modifications)}
 	\item Start from the definition of a function's fixed point:
 \end{itemize}
 
-\begin{definition}
+\setcounter{defn}{-1}
+\begin{defn}
 Let $K \subset \mathbb{R}^{n}$ and let $\mathbf{f}$ be a function that maps $\mathbf{x} \in K$ into another point $\mathbf{f}(\mathbf{x})\in K$ (i.e. the function maps $K$ into itself). If the point $\mathbf{x}^{*}$ is such that $\mathbf{f}(\mathbf{x}^{*}) = \mathbf{x}^{*}$, then $\mathbf{x}^{*}$ is called a \textbf{fixed (or equilibrium) point}.
-\end{definition}
+\end{defn}
 
 \end{frame}
 
@@ -361,26 +365,26 @@ Let $K \subset \mathbb{R}^{n}$ and let $\mathbf{f}$ be a function that maps $\ma
 \begin{frame}[fragile]
 \frametitle{Stability of Equilibrium}
 Let $y^{*}$ be an equilibrium point of $f$. Some definitions follow.
-\begin{definition}
+\begin{defn}
 	The point $y^{*}$ is \textbf{stable} if for any $\varepsilon > 0\,\exists\, \delta > 0$:
 \[
 	|y_{0} - y^{*}| < \delta \Rightarrow |f^{n}(y_{0}) - y^{*}| < \varepsilon, \, \forall n > 0.
 \]
 
 Otherwise, $y^{*}$ is \textbf{unstable}.
-\end{definition}
+\end{defn}
 
-\begin{definition}
+\begin{defn}
 	The point $y^{*}$ is \textbf{repelling} if $\exists\,\varepsilon > 0$:
 \[
 	0 < |y_{0} - y^{*}| < \varepsilon \Rightarrow |f(y_{0}) - y^{*}| > |y_{0} - y^{*}|.
 \]
-\end{definition}
+\end{defn}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Stability of Equilibrium (2)}
-\begin{definition}
+\begin{defn}
 	The point $y^{*}$ is \textbf{attracting (asymptotically stable)} if:
 	\begin{enumerate}
 		\item It is stable
@@ -390,13 +394,13 @@ Otherwise, $y^{*}$ is \textbf{unstable}.
 		\]
 		If $\eta = \infty$, then $y^{*}$ is \textbf{globally asymptotically stable}.
 	\end{enumerate}		 
-\end{definition}
+\end{defn}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Stability of Equilibrium (3)}
 
-\begin{theorem}
+\begin{thm}
 Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuously differentiable at $y^{*}$. Then:
 \begin{enumerate}
 	\item If $|f'(y^{*})| < 1$, then $y^{*}$ is an attractor
@@ -413,7 +417,7 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 		\item if $-2f'''(y^{*}) - 3[f''(y^{*})]^{2} > 0$, then $y^{*}$ is unstable
 	\end{enumerate}
 \end{enumerate}
-\end{theorem}
+\end{thm}
 
 \textcolor{orange}{Note:} \textcolor{magenta}{Theorems are provided just for usage and reference, no proofs are given or required!}
 
@@ -447,9 +451,9 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 	\]
 	for some fixed integer $m$ and all $n$. The smallest integer $m$ is called the \textbf{the period of the solution}.
 \end{itemize}
-\begin{definition}
+\begin{defn}
 	If the sequence $\{y_{t}\}$ has $q$ repeating values, then $y_{1}, y_{2},\ldots, y_{q}$ are called \textbf{period points}, and the set $\{y_{1},y_{2},\ldots,y_{q}\}$ is called a \textbf{periodic orbit}.
-\end{definition}
+\end{defn}
 
 \begin{itemize}
 	\item For example, if the equation is $y_{t+1} = f(y_{t})$, a $k$-periodic point is the $y$-coordinate of the intersection point of $f^{k}(y)$ and the 45\degree-line $y_{t+1} = y_{t}$
@@ -475,7 +479,7 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 \begin{frame}[fragile]
 \frametitle{First-order Difference Equations: Problem Setup}
 \begin{itemize}
-	\item A first-order difference equation is one in which the recursive relationship extends only to one period in the past, i.e.:
+	\item A first-order difference equation has the form:
 	\[
 		y_{t+1} = f(y_{t})
 	\]
