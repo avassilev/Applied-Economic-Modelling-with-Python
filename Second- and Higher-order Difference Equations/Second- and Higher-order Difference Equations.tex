@@ -529,6 +529,7 @@
 			Y_{t} & = & E_{t}
 		\end{array}
 	\]
+	\item We assume that  $a \geq 0$, $b \in (0,1)$ and $v>0$
 	\item Combine all equations to get the following second-order non-homogeneous difference equation:
 	\[
 		Y_{t} - (b + v)Y_{t-1} + vY_{t-2} = a + \overline{G}
@@ -590,7 +591,7 @@
 		& = & 1 - b
 	\end{array}
 	\]
-	\item As $b$ is interpreted as MPC, $b \in (0,1)$. The latter implies that also $(1 - m_{1})(1 - m_{2}) \in (0,1)$
+	\item As $b$ is interpreted as MPC and $b \in (0,1)$, this implies that $(1 - m_{1})(1 - m_{2}) \in (0,1)$
 \end{itemize}
 \end{frame}
 
@@ -615,7 +616,7 @@
 	\item If \textcolor{mygreen1}{$m_{1} > 1$}, then we should also have $m_{2} > 1$ (otherwise the condition $(1 - m_{1})(1 - m_{2}) \in (0,1)$ will be violated)
 	\item With $m_{1} > m_{2} > 1$, $Y_{t}$ has an explosive path
 	\item The above also implies that $m_{1}m_{2} = v > 1$, i. e. the accelerator coefficient is greater than 1
-	\item If \textcolor{mygreen1}{$m_{1} < 1$}, then $0 < m_{2} < m_{1} < 1$. From this follows first that $v \in (0,1)$ and second, that the dynamics is damped towards the equilibrium
+	\item If \textcolor{mygreen1}{$m_{1} < 1$}, then $0 < m_{2} < m_{1} < 1$. From this it follows first that $v \in (0,1)$ and, second, that the dynamics is damped towards the equilibrium
 	\item \textcolor{orange}{Note that the roots cannot equal 1 since otherwise $(1 - m_{1})(1 - m_{2})$ would not be positive but would also equal zero!}
 \end{itemize}
 \end{frame}
