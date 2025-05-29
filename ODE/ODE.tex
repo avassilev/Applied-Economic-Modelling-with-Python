@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 \documentclass[10pt,usenames,dvipsnames]{beamer}
 \usetheme{CambridgeUS}
 %\usetheme{Boadilla}
@@ -44,10 +45,12 @@
 \setbeamertemplate{theorems}[numbered]
 
 % Reset theorem-like environments so that each is numbered separately
-\usepackage{etoolbox}
-\undef{\definition}
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
-\newtheorem{definition}{\translate{Definition}}
+\newtheorem{defn}{\translate{Definition}}
 
 \definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
 \definecolor{mygray}{RGB}{248,249,250}
@@ -144,11 +147,11 @@
 
 \begin{frame}[fragile]
 \frametitle{What is a Differential Equation?}
-\begin{definition}
+\begin{defn}
 	A differential equation is an equation that relates an unknown function with one or more of its derivatives.
-\end{definition}
+\end{defn}
 \begin{itemize}
-	\item Note that a differential equation relates to an \textit{unknown function} not to an \textit{unknown number}
+	\item Note that the unknown object in a differential equation is a \textit{function}, not a \textit{number}
 	\item Note that such an equation can have one or more variables, constants, etc.
 	\item Given two variables $x$ and $y$, the general form of a differential equation in those two variables could be:
 	\[
@@ -161,9 +164,9 @@
 
 \begin{frame}[fragile]
 \frametitle{Ordinary Differential Equations}
-\begin{definition}
+\begin{defn}
 	An ordinary differential equation (ODE) is a differential equation that includes the derivatives of only one function of time.
-\end{definition}
+\end{defn}
 \begin{itemize}
 	\item Example:
 	\[
@@ -180,9 +183,9 @@
 
 \begin{frame}[fragile]
 \frametitle{ODE Order}
-\begin{definition}
+\begin{defn}
 	The order of an ODE is defined by the order of the highest derivative present in the equation.
-\end{definition}
+\end{defn}
 \begin{itemize}
 	\item Examples:
 	\[
@@ -199,14 +202,14 @@
 
 \begin{frame}[fragile]
 \frametitle{Linear vs. Non-linear ODE}
-\begin{definition}
+\begin{defn}
 	A linear ODE satisfies the following:
 	\begin{itemize}
 	 	\item The dependent variable and its derivatives appear to the power of one only
 	 	\item There are no products of the dependent variable and/or its derivatives in the equation
 	 	\item There are no transcendental functions\footnote{Functions that cannot be expressed in terms of a finite sequence of the algebraic operations of addition, multiplication, and root extraction.} of the dependent variable and/or its derivatives
 	 \end{itemize} 
-\end{definition}
+\end{defn}
 \begin{itemize}
 	\item A non-linear ODE is one not fitting the above definition
 	\item Example:
@@ -232,9 +235,9 @@
 
 \begin{frame}[fragile]
 \frametitle{Homogeneous vs. Non-homogeneous ODE}
-\begin{definition}
+\begin{defn}
 	In $(*)$, if $g(t) \equiv 0$, then the equation is called \textit{homogeneous}.
-\end{definition}
+\end{defn}
 \begin{itemize}
 	\item Example:
 	\[
@@ -250,9 +253,9 @@
 
 \begin{frame}[fragile]
 \frametitle{Autonomous vs. Non-autonomous ODE}
-\begin{definition}
+\begin{defn}
 	\textit{Autonomous} ODE are equations in which time is not explicitly present as an independent variable.	
-\end{definition}
+\end{defn}
 \begin{itemize}
 	\item Therefore, such equations are also popular as \textit{time-invariant} ODE
 	\item The equations in the previous slide, for example, are autonomous
@@ -269,9 +272,9 @@
 \begin{itemize}
 	\item Take $(*)$ once again
 \end{itemize}
-\begin{definition}
+\begin{defn}
 	A solution to this equation (if it exists) in an interval $I = \{t: a < t < b\}$ is the $n$-times differentiable function $\phi(t)$ which is defined on $I$ and is such that when substituted in $(*)$, satisfies it exactly over the whole interval.
-\end{definition}
+\end{defn}
 \begin{enumerate}
 	\item The graph of the solution of $(*)$ is called the \textit{solution curve} (or \textit{integral curve})
 	\item The set of all solutions is called the \textit{general solution}
@@ -341,9 +344,9 @@
 	\]
 \end{itemize}
 
-\begin{definition}
+\begin{defn}
 	Equations that can be represented as the product of such functions are called \textit{separable}.
-\end{definition}
+\end{defn}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -447,7 +450,7 @@
 			n = C_{1}e^{-\lambda t}
 		\]
 		
-		where $ C_{1} = e^{-C} $
+		where $ C_{1} = e^{C} $
 		\vspace{1cm}
 		
 		(This result is relevant to calculating the so-called \textit{half-life}.)
@@ -645,13 +648,13 @@
 \section{Existence and Uniqueness}
 \begin{frame}[fragile]
 \frametitle{Existence and Uniqueness}
-\begin{theorem}
+\begin{thm}
 	Given the first-order ODE:
 	\[
 		\dot{x} = F(t,x),
 	\]
 	suppose that $F(t,x)$ and $F'_{x}(t,x)$ are continuous in an open set $A$ in the $tx$-plane. Take an arbitrary point $(t_{0},x_{0}) \in A$. Then there exists a unique ``local'' solution that passes through $(t_{0},x_{0})$.
-\end{theorem}
+\end{thm}
 \begin{itemize}
 	\item ``local'' means that existence of solution is guaranteed for a small neighbourhood of $t_{0}$ only
 \end{itemize}
@@ -659,7 +662,7 @@
 
 \begin{frame}[fragile]
 \frametitle{Global Existence and Uniqueness}
-\begin{theorem}
+\begin{thm}
 	Consider the initial-value problem:
 	\[
 		\dot{x} = F(t,x), \quad x(t_{0}) = x_{0}
@@ -673,7 +676,7 @@
 		xF(t,x) \leq a(t)|x|^{2} + b(t), \quad \forall x \textrm{ and } \forall t \geq t_{0}
 	\]
 	then there is a unique solution of the problem on $[t_{0},+\infty)$.
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \section{Second-Order Equations}
@@ -793,7 +796,7 @@
 
 \begin{frame}[fragile]
 \frametitle{Linear Second-Order ODE (5)}
-\begin{theorem}
+\begin{thm}
 	\begin{enumerate}
 		\item[(a)] The \textbf{general solution} of the homogeneous equation is
 		\[
@@ -806,7 +809,7 @@
 		\]
 		where $Au_{1}(t) + Bu_{2}(t)$ is the general solution of the homogeneous equation, and $u^{*}(t)$ is any \textbf{particular solution} of the non-homogeneous equation
 	\end{enumerate}
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -840,7 +843,7 @@
 
 \begin{frame}[fragile]
 \frametitle{Constant Coefficients (3)}
-\begin{theorem}
+\begin{thm}
 	The \textbf{general solution} of the constant-coefficients homogeneous equation is determined by the roots of its characteristic equation as follows:
 	\begin{enumerate}
 		\item[(I)] If the discriminant $a^{2} - 4b > 0$, there are two distinct real roots, and:
@@ -856,7 +859,7 @@
 			x = e^{\alpha t}(A\cos \beta t + B\sin \beta t),\quad \alpha = -\dfrac{a}{2}, \, \beta = \dfrac{\sqrt{4b - a^{2}}}{2}
 		\]
 	\end{enumerate}
-\end{theorem}
+\end{thm}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1018,9 +1021,9 @@
 		\left|
 		\begin{array}{lcl}
 			\dot{u}_{1} & = & u_{3}\\
-			\dot{u}_{3} & = & f_{1}(t, u_{1}, u_{2}, u_{3}, u_{4})\\
+			\dot{u}_{3} & = & F_{1}(t, u_{1}, u_{2}, u_{3}, u_{4})\\
 			\dot{u}_{2} & = & u_{4}\\
-			\dot{u}_{4} & = & f_{2}(t, u_{1}, u_{2}, u_{3}, u_{4})\\	
+			\dot{u}_{4} & = & F_{2}(t, u_{1}, u_{2}, u_{3}, u_{4})\\	
 		\end{array}\right.
 		\]
 	\end{itemize}
@@ -1037,7 +1040,7 @@
 		
 		\item The space spanned by all vectors $ (x_{1}(t), x_{2}(t), \ldots, x_{n}(t)) $ is called the \textit{phase space}
 		
-		\item If all functions $ f_{i}(t, x_{1}(t), x_{2}(t),\ldots, x_{n}(t)) $ are collected in a vector $ \mathbf{F}(t, \mathbf{x}(t)) $, then the system of differential equations can be written as
+		\item If all functions $ F_{i}(t, x_{1}(t), x_{2}(t),\ldots, x_{n}(t)) $ are collected in a vector $ \mathbf{F}(t, \mathbf{x}(t)) $, then the system of differential equations can be written as
 		\[
 			\dot{\mathbf{x}}(t) = \mathbf{F}(t, \mathbf{x}(t))
 		\]

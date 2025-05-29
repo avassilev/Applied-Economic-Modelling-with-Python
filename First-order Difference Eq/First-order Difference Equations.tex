@@ -48,7 +48,7 @@
 %\usepackage{etoolbox}
 %\undef{\definition}
 \theoremstyle{plain}
-\newtheorem{thm}{Theorem}
+%\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
 \newtheorem{defn}{\translate{Definition}}
 
@@ -341,7 +341,6 @@ Andrey Vassilev (minor modifications)}
 	\item Start from the definition of a function's fixed point:
 \end{itemize}
 
-\setcounter{defn}{-1}
 \begin{defn}
 Let $K \subset \mathbb{R}^{n}$ and let $\mathbf{f}$ be a function that maps $\mathbf{x} \in K$ into another point $\mathbf{f}(\mathbf{x})\in K$ (i.e. the function maps $K$ into itself). If the point $\mathbf{x}^{*}$ is such that $\mathbf{f}(\mathbf{x}^{*}) = \mathbf{x}^{*}$, then $\mathbf{x}^{*}$ is called a \textbf{fixed (or equilibrium) point}.
 \end{defn}
@@ -400,7 +399,7 @@ Otherwise, $y^{*}$ is \textbf{unstable}.
 \begin{frame}[fragile]
 \frametitle{Stability of Equilibrium (3)}
 
-\begin{thm}
+\begin{theorem}
 Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuously differentiable at $y^{*}$. Then:
 \begin{enumerate}
 	\item If $|f'(y^{*})| < 1$, then $y^{*}$ is an attractor
@@ -417,7 +416,7 @@ Let $y^{*}$ be a fixed point of $y_{t+1} = f(y_{t})$, and let $f$ be continuousl
 		\item if $-2f'''(y^{*}) - 3[f''(y^{*})]^{2} > 0$, then $y^{*}$ is unstable
 	\end{enumerate}
 \end{enumerate}
-\end{thm}
+\end{theorem}
 
 \textcolor{orange}{Note:} \textcolor{magenta}{Theorems are provided just for usage and reference, no proofs are given or required!}
 
