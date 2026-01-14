@@ -203,16 +203,16 @@
 \begin{frame}[fragile]
 \frametitle{Linear vs. Non-linear ODE}
 \begin{defn}
-	A linear ODE satisfies the following:
-	\begin{itemize}
-	 	\item The dependent variable and its derivatives appear to the power of one only
-	 	\item There are no products of the dependent variable and/or its derivatives in the equation
-	 	\item There are no transcendental functions\footnote{Functions that cannot be expressed in terms of a finite sequence of the algebraic operations of addition, multiplication, and root extraction.} of the dependent variable and/or its derivatives
-	 \end{itemize} 
+	A linear ODE is one that can be written in the form
+	\[
+		a_{0}(t)\dfrac{d^{n}x}{dt^{n}} + a_{1}(t)\dfrac{d^{n-1}x}{dt^{n-1}} + \ldots + a_{n}(t)x = g(t) \quad (*)
+	\]
+	i.e. the unknown function $x(t)$ and its derivatives enter the equation linearly and the coefficients $a_i(t)$ and the right-hand side 
+	$g(t)$ may depend on time $t$ (but not on $x$).
 \end{defn}
 \begin{itemize}
 	\item A non-linear ODE is one not fitting the above definition
-	\item Example:
+	\item Example of a non-linear ODE:
 	\[
 		\dot{x} = \dfrac{1}{t} -2\cos(x)
 	\]
@@ -254,11 +254,13 @@
 \begin{frame}[fragile]
 \frametitle{Autonomous vs. Non-autonomous ODE}
 \begin{defn}
-	\textit{Autonomous} ODE are equations in which time is not explicitly present as an independent variable.	
+	\textit{Autonomous} ODE are equations in which time is not explicitly present as an independent variable and hence can be written in the form
+	\[ \dot{x} = F(x). \]	
 \end{defn}
 \begin{itemize}
 	\item Therefore, such equations are also popular as \textit{time-invariant} ODE
 	\item The equations in the previous slide, for example, are autonomous
+	\item Non-autonomous equations take the form $\dot{x} = F(t,x)$ 
 	\item A non-autonomous one would be for instance:
 	\[
 		\dot{x} = ax + be^{-t}, \quad b \neq 0
