@@ -428,7 +428,7 @@
 		
 		This can also be written in vector notation:
 		\[ \mathcal{L}(\mathbf{x}) = f(\mathbf{x}) - \boldsymbol{\lambda}' (\mathbf{g}(\mathbf{x})-\mathbf{b}) , \] 
-		where $ \boldsymbol{\lambda }= (\lambda_1,\ldots,\lambda_m)' $ is the vector of Lagrange multipliers.\bigskip
+		where $ \boldsymbol{\lambda}= (\lambda_1,\ldots,\lambda_m)' $ is the vector of Lagrange multipliers. While, strictly speaking, $\mathcal{L}$ depends on $\boldsymbol{\lambda}$, we'll omit this dependence to lighten notation.  \bigskip
 		
 		\textbf{Note:} Here we follow the economics sign convention and subtract the constraint terms in the Lagrangian.
 		Math textbooks typically use a ``+'' in front of $\lambda$; both lead to the same optimality conditions, with multipliers differing only by sign.
@@ -443,7 +443,7 @@
 				\item Form the Lagrangian as above
 				\item Differentiate it w.r.t. the variables we are optimizing over, i.e.
 				\[ \dfrac{\partial \mathcal{L}}{\partial x_i} = \dfrac{\partial f(\mathbf{x})}{\partial x_i} - \sum_{j=1}^{m}\lambda_j \dfrac{\partial g_j(\mathbf{x})}{\partial x_i},~i=1,\ldots,n \]
-				\item Set the resulting derivatives equal to zero, i.e. construct the first-order conditions
+				\item Set the resulting derivatives equal to zero, i.e. construct the first-order conditions (FOCs)
 				\begin{equation}
 					 \dfrac{\partial \mathcal{L}}{\partial x_i} = 0,~i=1,\ldots,n
 					\label{eq:Lagr_FOCs}
@@ -457,14 +457,14 @@
 		\frametitle{Static Optimization with Equality Constraints}
 		\framesubtitle{Remarks}
 		\begin{itemize}
-			\item Sometimes the Lagrangian is equivalently formulated as \[ \mathcal{L}(\mathbf{x}) = f(\mathbf{x}) - \lambda_1 g_1(\mathbf{x}) - \cdots - \lambda_m g_m(\mathbf{x}). \] It obviously makes no difference as to the result of the differentiation step.
+			\item Sometimes the Lagrangian is formulated as \[ \mathcal{L}(\mathbf{x}) = f(\mathbf{x}) - \lambda_1 g_1(\mathbf{x}) - \cdots - \lambda_m g_m(\mathbf{x}). \] It obviously makes no difference in the differentiation step and produces the same result.
 			\item One modification of the algorithm additionally requires differentiating the Lagrangian w.r.t. $ \lambda_j $ and setting the resulting derivatives equal to zero. This simply reproduces the constraints \eqref{eq:constr} and is covered by the last step of our algorithm.
 			\item A Lagrange multiplier is interpreted as a \emph{shadow price}, i.e. the gain (or loss) arising from relaxing the associated constraint.
 			\item The Lagrangian algorithm produces necessary conditions for optimality only under additional assumptions.
 		\end{itemize}
 	\end{frame}
 	
-		\begin{frame}[fragile]
+	\begin{frame}[fragile]
 		\frametitle{Static Optimization with Equality Constraints}
 		\framesubtitle{Necessary conditions for optimality}
 			
@@ -497,12 +497,151 @@
 		\begin{Fact}
 			If there exist numbers $\lambda_1,\ldots,\lambda_m$ and an admissible
 			$\mathbf{x}^*$ which together satisfy the first-order conditions in the Lagrangian algorithm, and if
-			the Lagrangian $\mathcal{L}(x)$ is concave (convex) in $x$, and
+			the Lagrangian $\mathcal{L}(\mathbf{x})$ is concave (convex) in $\mathbf{x}$, and
 			if $S$ is convex, then $\mathbf{x}^*$ solves the maximization (minimization)
 			problem \eqref{eq:obj}-\eqref{eq:constr}.
 			\label{fc:SC_Lagr}
 		\end{Fact}
 	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\framesubtitle{Local second-order conditions}
+		\begin{itemize}\itemsep1em
+			\item The sufficient conditions in Fact \ref{fc:SC_Lagr} are global and therefore often turn out to be too restrictive. A more widely applicable route to establishing optimality is given by \textit{local second-order conditions}.
+			\item Local second-order conditions extend the unconstrained second-order test by replacing the Hessian of the objective function with an appropriate modification that incorporates the equality constraints.	
+		\end{itemize}
+	\end{frame}
+		
+		\begin{frame}[fragile]
+			\frametitle{Static Optimization with Equality Constraints}
+			\framesubtitle{Local second-order conditions: bordered Hessians}
+			 For problem \eqref{eq:obj}-\eqref{eq:constr} and $r=m+1,\ldots,n$ we define the \textbf{bordered Hessian determinant} as follows:
+			\[
+			B_r(\mathbf{x}^*) =
+			\begin{vmatrix}
+				0 & \cdots & 0
+				& \dfrac{\partial g_1(\mathbf{x}^*)}{\partial x_1}
+				& \cdots
+				& \dfrac{\partial g_1(\mathbf{x}^*)}{\partial x_r} \\[1ex]
+				\vdots & \ddots & \vdots
+				& \vdots & & \vdots \\[1ex]
+				0 & \cdots & 0
+				& \dfrac{\partial g_m(\mathbf{x}^*)}{\partial x_1}
+				& \cdots
+				& \dfrac{\partial g_m(\mathbf{x}^*)}{\partial x_r} \\[1ex]
+				\dfrac{\partial g_1(\mathbf{x}^*)}{\partial x_1}
+				& \cdots
+				& \dfrac{\partial g_m(\mathbf{x}^*)}{\partial x_1}
+				& \dfrac{\partial^2 \mathcal L(\mathbf{x}^*)}{\partial x_1^2}
+				& \cdots
+				& \dfrac{\partial^2 \mathcal L(\mathbf{x}^*)}{\partial x_1 \partial x_r} \\[1ex]
+				\vdots & & \vdots
+				& \vdots & \ddots & \vdots \\[1ex]
+				\dfrac{\partial g_1(\mathbf{x}^*)}{\partial x_r}
+				& \cdots
+				& \dfrac{\partial g_m(\mathbf{x}^*)}{\partial x_r}
+				& \dfrac{\partial^2 \mathcal L(\mathbf{x}^*)}{\partial x_r \partial x_1}
+				& \cdots
+				& \dfrac{\partial^2 \mathcal L(\mathbf{x}^*}{\partial x_r^2}
+			\end{vmatrix}
+			\]
+		\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\framesubtitle{Remarks on bordered Hessians}
+		\begin{itemize}\itemsep1em
+			\item Some expositions directly define the full bordered Hessian matrix (the matrix under the determinant sign in the previous slide in the case $r=n$) and then discuss the last $n-m$ leading principal minors of this matrix, which of course are our objects $B_r(\mathbf{x}^*)$, $r=m+1,\ldots,n$.
+			\item One way of compactly describing the matrix underlying a bordered Hessian determinant is to say it has the following block structure:
+			\[ \begin{pmatrix}
+				\mathbf{0}_{m \times m} & J_{m \times r} \\[1ex]
+				J'_{r \times m} & H_{r \times r}
+			\end{pmatrix}, \]
+			where $J$ denotes the (partial) Jacobian of the vector function specifying the constraints, $H$ is the (partial) Hessian of the Lagrangian function and the subscripts indicate the dimensions of the corresponding matrices.
+			\item We may need to re-label variables to ensure that the first $m$ columns of the $J_{m \times r}$ matrix are linearly independent. This is assumed in what follows.
+		\end{itemize}
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\framesubtitle{Local second-order conditions: the general case}
+		The following second-derivative test provides ``local'' sufficient conditions for optimality:
+		\begin{Fact}
+			Suppose the functions $f$ and $g_1,\ldots,g_m$ are defined on a set $S\subset\mathbb{R}^n$, and let
+			$\mathbf{x}^*$ be an interior point of $S$ satisfying the necessary conditions in Fact \ref{fc:NC_Lagr}.
+			Suppose further that $f$ and $g_1,\ldots,g_m$ are $C^2$ in a ball around $\mathbf{x}^*$.
+			With the determinants $B_r(\mathbf{x}^*)$ defined as above, we have:
+			\begin{enumerate}
+				\item If $(-1)^m\,B_r(\mathbf{x}^*)>0$ for $r=m+1,\ldots,n$, then $\mathbf{x}^*$ solves the local
+				minimization problem in \eqref{eq:obj}-\eqref{eq:constr}.
+				\item If $(-1)^r\,B_r(\mathbf{x}^*)>0$ for $r=m+1,\ldots,n$, then $\mathbf{x}^*$ solves the local
+				maximization problem in \eqref{eq:obj}-\eqref{eq:constr}.
+			\end{enumerate}
+		\end{Fact}\bigskip
+		
+		Note that the first condition requires the bordered Hessian determinants to keep the same sign, while the second one requires that the signs alternate.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\framesubtitle{Local second-order conditions: one constraint (setup)}
+		
+		Consider the common case of a \textbf{single} equality constraint ($m=1$):
+		\[
+		f(\mathbf{x}) \to \max~(\min)
+		\quad \text{s.t.} \quad g(\mathbf{x})=b,
+		\qquad \mathbf{x}\in S\subset\mathbb{R}^n.
+		\]
+		
+		For $r=2,\ldots,n$, the \textbf{bordered Hessian determinant} (restricted to $x_1,\ldots,x_r$) takes the form
+		\[
+		B_r(\mathbf{x}^*)=
+		\begin{vmatrix}
+			0 & \nabla g_r(\mathbf{x}^*)' \\[0.5ex]
+			\nabla g_r(\mathbf{x}^*) & H_r(\mathbf{x}^*)
+		\end{vmatrix},
+		\]
+		where
+		\[
+		\nabla g_r(\mathbf{x}^*) =
+		\begin{pmatrix}
+			\dfrac{\partial g(\mathbf{x}^*)}{\partial x_1}\\ \vdots\\ \dfrac{\partial g(\mathbf{x}^*)}{\partial x_r}
+		\end{pmatrix},
+		\qquad
+		H_r(\mathbf{x}^*)=
+		\left[\dfrac{\partial^2 \mathcal{L}(\mathbf{x}^*)}{\partial x_i\,\partial x_j}\right]_{i,j=1,\ldots,r}.
+		\]
+		
+		
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\framesubtitle{Local second-order conditions: one constraint (test)}
+		
+		Suppose $\mathbf{x}^*$ is an admissible point satisfying the first-order conditions
+		for the Lagrangian method with one equality constraint, and assume the required $C^2$
+		regularity in a neighborhood of $\mathbf{x}^*$.
+		
+		\begin{block}{Second-derivative test ($m=1$)}
+			For the determinants $B_r(\mathbf{x}^*)$ from the previous slide:
+			\begin{itemize}\itemsep0.6em
+				\item \textbf{Local maximum:} $(-1)^r\,B_r(\mathbf{x}^*)>0$ for $r=2,\ldots,n$.
+				\item \textbf{Local minimum:} $-B_r(\mathbf{x}^*)>0$ for $r=2,\ldots,n$
+				(equivalently, $B_r(\mathbf{x}^*)<0$ for all $r$).
+			\end{itemize}
+		\end{block}
+		
+		\smallskip
+		\textbf{Remark:} The local maximum condition requires alternating signs across $r$,
+		while the local minimum condition requires the same sign across $r$.
+	\end{frame}
+	
+	
+	
 	
 	
 	
@@ -526,7 +665,7 @@
 	
 	\begin{frame}[fragile]
 		\frametitle{Static Optimization with Equality Constraints}
-		\addtocounter{theorem}{-1}
+		\addtocounter{exmpl}{-1}
 		\begin{exmpl}[cont.]
 			The above problem can be formalized as \[  \max_{c_1,c_2} u(c_1,c_2) \]
 			s.t. \[ c_2 = (y-c_1)(1+r). \]
@@ -539,7 +678,7 @@
 	
 	\begin{frame}[fragile]
 		\frametitle{Static Optimization with Equality Constraints}
-		\addtocounter{theorem}{-1}
+		\addtocounter{exmpl}{-1}
 		\begin{exmpl}[cont.] The solution algorithm yields
 			\[ \dfrac{\partial \mathcal{L}}{\partial c_1} = \dfrac{1}{c_1} - \lambda = 0 \quad \Rightarrow \quad c_1 = \dfrac{1}{\lambda} \]
 			\[ \dfrac{\partial \mathcal{L}}{\partial c_2} = \beta \dfrac{1}{c_2} - \dfrac{\lambda}{1+r} = 0 \quad \Rightarrow \quad c_2 = \dfrac{\beta (1+r)}{\lambda} \]
@@ -553,9 +692,62 @@
 	
 	\begin{frame}[fragile]
 		\frametitle{Static Optimization with Equality Constraints}
-		\addtocounter{theorem}{-1}
+		\addtocounter{exmpl}{-1}
 		\begin{exmpl}[cont.] 
 			We then have \[ c_2^* = \beta (1+r)c_1 =  (1+r)\dfrac{\beta}{1+\beta}y. \]
+						
+			\textbf{Second-order condition (bordered Hessian)}
+			
+			The constraint is $g(c_1,c_2)=c_1+\dfrac{c_2}{1+r}=y$, hence
+			\[
+			\frac{\partial g}{\partial c_1}=1,
+			\qquad
+			\frac{\partial g}{\partial c_2}=\frac{1}{1+r}.
+			\]
+			The Hessian of the Lagrangian w.r.t.\ $(c_1,c_2)$ is
+			\[
+			H=
+			\begin{pmatrix}
+				\dfrac{\partial^2\mathcal L}{\partial c_1^2} & \dfrac{\partial^2\mathcal L}{\partial c_1\partial c_2}\\[1ex]
+				\dfrac{\partial^2\mathcal L}{\partial c_2\partial c_1} & \dfrac{\partial^2\mathcal L}{\partial c_2^2}
+			\end{pmatrix}
+			=
+			\begin{pmatrix}
+				-\dfrac{1}{c_1^2} & 0\\[1ex]
+				0 & -\dfrac{\beta}{c_2^2}
+			\end{pmatrix}.
+			\]
+		\end{exmpl}
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.] 
+			Since $n=2$ and $m=1$, we only need $B_2$:
+			\[
+			B_2(\mathbf{x}^*)=
+			\begin{vmatrix}
+				0 & 1 & \dfrac{1}{1+r}\\[1ex]
+				1 & -\dfrac{1}{(c_1^*)^2} & 0\\[1ex]
+				\dfrac{1}{1+r} & 0 & -\dfrac{\beta}{(c_2^*)^2}
+			\end{vmatrix}
+			=
+			\frac{\beta}{(c_2^*)^2}+\frac{1}{(1+r)^2}\frac{1}{(c_1^*)^2}
+			\;>\;0.
+			\]
+			
+			Therefore $(-1)^2B_2(\mathbf{x}^*)>0$, so $(c_1^*,c_2^*)$ is a \textbf{local maximum}.
+		\end{exmpl}
+	\end{frame}
+	
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Static Optimization with Equality Constraints}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.] 
 			
 			Let us check how the optimal value of the utility function $u^*= u(c_1^*,c_2^*) $ changes with income: 
 			\[ \begin{split}
