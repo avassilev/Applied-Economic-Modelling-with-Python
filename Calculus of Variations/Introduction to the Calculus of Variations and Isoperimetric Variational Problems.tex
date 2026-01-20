@@ -1,0 +1,565 @@
+% !TeX spellcheck = en_GB
+\documentclass[10pt,usenames,dvipsnames]{beamer}
+\usetheme{CambridgeUS}
+%\usetheme{Boadilla}
+\definecolor{myred}{RGB}{163,0,0}
+%\usecolortheme[named=`blue]{structure}
+\usecolortheme{dove}
+\usefonttheme[]{professionalfonts}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest,compat/show suggested version=false}
+\usetikzlibrary{matrix,overlay-beamer-styles,arrows,shapes,calc,backgrounds}
+\usepackage{bm}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{verbatim}
+\usepackage{paratype}
+\usepackage{mathpazo}
+\usepackage{listings}
+\usepackage{csvsimple}
+
+\newcommand{\cov}{\mathsf{cov}}
+\newcommand{\corr}{\mathsf{corr}}
+\newcommand{\var}{\mathsf{Var}}
+\newcommand{\plim}{\mathrm{plim\ }}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\Est}{\mathsf{Est.Var}}
+\newcommand{\Asy}{\mathsf{Asy.Var}}
+\newcommand{\Esta}{\mathsf{Est.Asy.Var}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Prob}{\mathrm{Prob}}
+\newcommand{\Med}{\mathsf{Med}}
+\newcommand{\rank}{\mathsf{rank}}
+\newcommand{\argmin}{\mathsf{arg\,min}}
+
+\newcommand{\cc}[1]{\texttt{\textcolor{blue}{#1}}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+
+% Number theorem environments
+\setbeamertemplate{theorem}[ams style]
+\setbeamertemplate{theorems}[numbered]
+
+% Reset theorem-like environments so that each is numbered separately
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\newtheorem{Fact}{\translate{Fact}}
+\theoremstyle{definition}
+\newtheorem{defn}{\translate{Definition}}
+\newtheorem{exmpl}{\translate{Example}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+\definecolor{mygray}{RGB}{248,249,250}
+
+% Change colours for theorem-like environments
+\definecolor{mygreen1}{RGB}{0,96,0}
+\definecolor{mygreen2}{RGB}{229,239,229}
+\setbeamercolor{block title}{fg=white,bg=mygreen1}
+\setbeamercolor{block body}{fg=black,bg=mygreen2}
+
+\lstdefinestyle{numbers}{numbers=left, stepnumber=1, numberstyle=\tiny, numbersep=10pt}
+\lstdefinestyle{MyFrame}{backgroundcolor=\color{yellow},frame=shadowbox}
+
+\lstdefinestyle{rstyle}%
+{language=R,
+	basicstyle=\footnotesize\ttfamily,
+	backgroundcolor = \color{mygray},
+	commentstyle=\slshape\color{green!50!black},
+	keywordstyle=\bfseries\color{blue!50!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+	%escapechar=\#,
+	rulecolor = \color{mygray}, 
+	showstringspaces = false,
+	showtabs = false,
+	tabsize = 2,
+	emphstyle=\color{red},
+	frame = single} 
+
+\setbeamertemplate{navigation symbols}{}
+
+\lstset{language=R,frame=single}
+
+\AtBeginSection{\frame{\sectionpage}}
+
+% Remove Section 1, Section 2, etc. as titles in section pages
+\defbeamertemplate{section page}{mine}[1][]{%
+	\begin{centering}
+		{\usebeamerfont{section name}\usebeamercolor[fg]{section name}#1}
+		\vskip1em\par
+		\begin{beamercolorbox}[sep=12pt,center]{part title}
+			\usebeamerfont{section title}\insertsection\par
+		\end{beamercolorbox}
+	\end{centering}
+} 
+
+\setbeamertemplate{section page}[mine]  
+
+\hypersetup{colorlinks, urlcolor=blue, linkcolor = myred} 
+
+\title{R406: Applied Economic Modelling with Python}
+\subtitle{\textcolor{myred}{Introduction to the Calculus of Variations. Isoperimetric Variational Problems}}
+\author[Andrey Vassilev]{Andrey Vassilev}
+
+\date{} 
+
+\begin{document}
+\maketitle
+
+\begin{frame}[fragile]
+\frametitle{Lecture Contents}
+\tableofcontents
+\end{frame}
+
+
+\begin{section}{An abstract look at optimization problems}\label{sec:abstr}
+	\begin{frame}[fragile]
+		\frametitle{What is an optimization problem, really?}
+		\begin{itemize} \itemsep1em
+			\item You have already seen various optimization problems.
+			\item They required finding maxima or minima of functions.
+			\item These functions involved one or several variables.
+			\item In some cases these variables were constrained by (systems of) equations or inequalities.
+		\end{itemize}\bigskip \pause
+		
+		\alert{What are the common features of the optimization problems that we have encountered?}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The constituents of an optimization problem}
+		From the examples of optimization problems we can extract the following:
+		\begin{itemize} \itemsep1em
+			\item An optimization problem requires a function to be maximized or minimized (the \emph{objective function}).
+			\item In the most abstract sense, a function $ f $ is a rule of association (a mapping) between the elements of a set $ X $ and the elements of another set $ Y $:
+			\[ f: X \rightarrow Y. \] The sets $ X $ (the \emph{domain} of $ f $) and $ Y $ (the \emph{codomain} of $ f $) can be of arbitrary nature.
+			\item Examples of functions under this broadened definition include:
+			\begin{itemize}
+				\item The familiar functions like $ f(x) = 2x^4 $ are mappings from (subsets of) $ \mathbb{R}^1 $ to (subsets of) $ \mathbb{R}^1 $. 
+				\item Functions of $ n $ real variables, which are mappings from $ \mathbb{R}^n $ to  $ \mathbb{R}^1 $.
+				\item An $ m \times n $ matrix with real entries can serve to define a linear function from $ \mathbb{R}^n $ to $ \mathbb{R}^m $ via post-multiplication with vectors $ \mathbf{x} \in \mathbb{R}^n $.
+				\item The determinant maps the set of square matrices to the set of real numbers.
+				\item The definite integral can be viewed as a mapping from a suitable set of functions to the (extended) real numbers.
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The constituents of an optimization problem}
+		\begin{itemize} \itemsep1em
+			\item The set of functions with domain $ X $ and codomain $ Y $ is denoted by $ Y^X $. 
+			\begin{itemize}
+				\item Thus, the well-known $ \mathbb{R}^n $ can be reinterpreted as a space of functions from the set $ \{1,2,\ldots,n\} $ to the real numbers.
+				\item Similarly, the notation $ \mathbb{R}^{m\times n} $ for the real-valued matrices with $ m $ rows and $ n $ columns tells us that a matrix can be viewed as a function from the Cartesian product of the sets $ \{1,2,\ldots,m\} $ and $ \{1,2,\ldots,n\} $ to $ \mathbb{R} $.
+			\end{itemize} 
+			\item In order for a function to be suitable for use as an objective function, the elements of its codomain must be ordered (that is, we must be able to tell that one is ``larger'' or ``better'' than another).
+			\item For practical purposes this means that we'll be optimizing functions having $ \mathbb{R}^1 $ as their codomain. 
+			\item In contrast, the domains of the objective functions can be more diverse types of sets, as long as we have appropriate methods to choose among the different elements.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The constituents of an optimization problem}
+		\begin{itemize} \itemsep1em
+			\item The elements of the domain of an objective function can be subject to various requirements -- the \emph{constraints} of the optimization problem.
+			\item Typically, these constraints take the form of other functions (with the same domain as the objective function), which are used to define various equations or inequalities.
+			\item This idea remains intact irrespective of the types of sets that serve as domains of the constraint functions.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Specific classes of optimization problems}
+		\begin{itemize}\itemsep1em
+			\item While the above considerations are fairly broad, there are two specific classes of situations that are of special relevance for economists:
+			\begin{enumerate}\itemsep1em
+				\item The sets we are optimizing over are sequences or even bundles of sequences.
+				\item The sets we are optimizing over are functions defined on a subset of the real line.
+			\end{enumerate}
+			\item These two classes are especially interesting because they provide a natural way to treat dynamic decisions in an optimizing framework, e.g. a consumption stream in discrete time is a sequence of nonnegative numbers and in continuous time is a function defined on an interval $ [0,T] $ or $ [0,\infty) $.
+			\item The importance of such optimization problems is not confined to dynamic decisions. They can also be useful in other situations, e.g. when modelling choices with infinitesimal influence of the individual agent.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Specific classes of optimization problems}
+		\begin{itemize}\itemsep1em
+			\item While formulations may differ, in the vast majority of economic cases the objective function is defined either as a \emph{series} involving the respective sequences or an \emph{integral} involving the functions we are optimizing over.
+			\item Constraints may also differ but in typical cases the functions or sequences we are optimizing over are required to satisfy \emph{differential equations} or, respectively, \emph{difference equations}.
+			\item Depending on the details of the formulation, such problems are called either \emph{calculus of variations (variational) problems} or \emph{optimal control problems} (in discrete or continuous time).
+			\item In this lecture we will study some of the basics of the calculus of variations.
+		\end{itemize}
+	\end{frame}
+	
+\end{section}
+
+\begin{section}{Basic variational problems}\label{sec:CoV}
+	
+	\begin{frame}[fragile]
+		\frametitle{From simple optimization to variational problems}
+		The objective ``functions'' we'll be working with are called \emph{functionals}. A functional is a quantity which is determined by the choice of one or more functions.\bigskip
+		
+		\begin{exmpl}
+			The utility functional is a popular one in economics. Let us look at a time interval from a starting time $ 0 $ up to a final time $ T $ and let the consumption of an economic agent at time $ t $ be denoted by $ c(t) \geq 0$. Then the function $ t \mapsto c(t)$ for $ t\in [0,T] $ represents the consumption stream of the agent. Assume for simplicity that this function is continuous. The utility functional of the agent is defined as \[ \int_{0}^{T} e^{-\rho t} U(c(t))\,dt, \] where $ U $ is a given utility function and $ \rho>0 $ is the time discount factor.
+			
+			One can try to maximize this functional by choosing from a given set of functions $ c(t) $ defined on $ [0,T] $ and taking values in $ \mathbb{R}_{+} $.
+			\label{ex:Ufnl}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{From simple optimization to variational problems}
+		\begin{itemize}\itemsep1em
+			\item In the familiar optimization problems the (implicit) approach is to see what would happen with the objective function if we vary the argument slightly. If we expect no change, then we are on a flat part of the graph, possibly an extremum.
+			\item This is the rationale behind equating the first derivative to zero.
+			\item In variational problems we again want to change the argument slightly and see what happens with the objective functional.
+			\item This raises the question of how one can define ``varying a function slightly''.
+		\end{itemize}
+		
+		\textbf{Note:} The considerations presented below are meant to be suggestive and are therefore informal. See e.g. the Elsgolts book for more details.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{From simple optimization to variational problems}
+		\begin{itemize}\itemsep1em
+			\item One way of ``varying'' a function, say $ x : [t_0,t_1] \rightarrow \mathbb{R} $ which is $ C^1 $, is to take another $ C^1 $ function $ \eta : [t_0,t_1] \rightarrow \mathbb{R} $ and construct the following:\[ x(t)+\alpha \eta(t),\quad \alpha \in \mathbb{R}. \]
+			\item The resulting function can be viewed as a perturbed version of $ x(t) $. 
+			\item For $ \alpha = 0 $ we obtain exactly $ x(t) $ and as $ \alpha \rightarrow 0 $ the function is close (in some sense) to $ x(t) $.
+			\item This approach is convenient as it allows us to reduce the task of perturbing a function to that of varying the scalar $ \alpha $.
+		\end{itemize}\pause \bigskip
+		
+		\alert{We are now in a position to define a simple variational problem.}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A basic variational problem}
+		Take the class of $ C^1 $ functions $ x : [t_0,t_1] \rightarrow \mathbb{R} $ for which the \emph{boundary conditions} $ x(t_0)=x_0 $ and $ x(t_1)=x_1 $ are fulfilled.\bigskip
+		
+		Consider the functional \begin{equation}
+			J(x) = \int_{t_0}^{t_1} F(t,x,\dot{x})\,dt,
+			\label{eq:ObjFunctional}
+		\end{equation}
+		where the function $ F $ is assumed differentiable in its arguments, as many times as needed.\bigskip
+		
+		The basic variational problem consists in finding a maximum or a minimum of the functional $ J(x) $ for functions in the above class.
+	\end{frame}
+	
+\end{section}
+
+\begin{section}{The Euler equation}\label{sec:Euler}
+	
+	\begin{frame}[fragile]
+		\frametitle{Preliminary considerations}
+		\begin{itemize}\itemsep1em
+			\item A first step in solving the basic variational problem is to find necessary conditions for optimality.
+			\item These NCs will be the counterpart of the condition $ f'(x)=0 $ for a function of one variable.
+			\item The result of the procedure we will develop is called the \emph{Euler equation}.
+			\item The Euler equation is a differential equation whose solutions are \emph{extremals}, i.e. candidates for optimality.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Euler equation: an informal derivation}
+		Suppose that $ x(t) $ is an admissible function for which the functional $ J(x) $ attains, for instance, a (local) maximum. Then, the value of $ J $ will be smaller for all admissible functions that are sufficiently close to $ x(t) $. \bigskip
+		
+		To construct these ``nearby'' functions, we require that the perturbation $ \eta $ fulfils the condition $ \eta(t_0)=\eta(t_1)=0 $. In this case $ x(t)+\alpha \eta(t) $ will also be admissible (it will meet the boundary conditions). \bigskip
+		
+		With $ x(t) $ and $ \eta(t) $ fixed, the functional $ J(x(t)+\alpha \eta(t)) $ can be viewed as a function of $ \alpha $. The necessary condition for an extremum is that the first derivative w.r.t. $ \alpha $ vanishes and we also know that the extremum obtains for $ \alpha=0 $:
+		\[ \left.\dfrac{d}{d \alpha}\right|_{\alpha=0} J(x(t)+\alpha \eta(t)) = 0 . \]
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Euler equation: an informal derivation}
+		We have \[ \begin{split}
+			\dfrac{d}{d \alpha} \int_{t_0}^{t_1} & F\left(t,x(t)+\alpha\eta(t),\dot{x}(t)+\alpha\dot{\eta}(t)\right) \,dt = \\
+			\int_{t_0}^{t_1}  \biggl( &  F'_x(t,x(t)\textcolor<2->{red}{+\alpha \eta(t)},\dot{x}(t)\textcolor<2->{red}{+\alpha \dot{\eta}(t)})\eta(t) + \\
+			& F'_{\dot{x}}(t,x(t)\textcolor<2->{red}{+\alpha \eta(t)},\dot{x}(t)\textcolor<2->{red}{+\alpha \dot{\eta}(t)})\dot{\eta}(t)\biggr)\,dt.
+		\end{split}  \]
+		
+		\uncover<2->{Since the resulting expression has to be evaluated at $ \alpha = 0 $, we obtain 
+			\[ \int_{t_0}^{t_1}  \biggl(  F'_x(t,x(t),\dot{x}(t))\eta(t) + \textcolor<3>{blue}{F'_{\dot{x}}(t,x(t),\dot{x}(t))\dot{\eta}(t)}\biggr)\,dt. \]}
+		
+		\uncover<3->{We next integrate the second term by parts.}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Euler equation: an informal derivation}
+		\[\begin{split} 
+			& \int_{t_0}^{t_1}  \biggl( F'_x(t,x(t),\dot{x}(t))\eta(t) +  \textcolor{blue}{F'_{\dot{x}}(t,x(t),\dot{x}(t))\dot{\eta}(t)}\biggr)\,dt  = \\
+			& \int_{t_0}^{t_1} F'_x(t,x(t),\dot{x}(t))\eta(t)\,dt + \int_{t_0}^{t_1} F'_{\dot{x}}(t,x(t),\dot{x}(t))\,d\eta(t)=\\
+			& \int_{t_0}^{t_1} F'_x(t,x(t),\dot{x}(t))\eta(t)\,dt + \underbrace{\left. F'_{\dot{x}}(t,x(t),\dot{x}(t))\eta(t)\right|_{t_0}^{t^1}}_{=0 \text{ since } \eta(t_0)=\eta(t_1)=0 } - \int_{t_0}^{t_1} \eta(t) \,d  F'_{\dot{x}}(t,x(t),\dot{x}(t)) = \\
+			& \int_{t_0}^{t_1} F'_x(t,x(t),\dot{x}(t))\eta(t)\,dt -  \int_{t_0}^{t_1} \eta(t) \frac{d}{dt}F'_{\dot{x}}(t,x(t),\dot{x}(t))\,dt  =\\
+			& \int_{t_0}^{t_1} \left(F'_x(t,x(t),\dot{x}(t)) - \frac{d}{dt}F'_{\dot{x}}(t,x(t),\dot{x}(t)) \right)\eta(t)\,dt.
+		\end{split}\]
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Euler equation: an informal derivation}
+		Recall that the expression we obtained should be equal to zero:
+		\[ \int_{t_0}^{t_1} \left(F'_x(t,x(t),\dot{x}(t)) - \frac{d}{dt}F'_{\dot{x}}(t,x(t),\dot{x}(t)) \right)\eta(t)\,dt =0.\]
+		
+		There is one additional complication to overcome: the presence of $ \eta(t) $ under the integral sign.\bigskip
+		
+		The following result comes to our rescue:
+		\begin{Fact}[The fundamental lemma of the calculus of variations]
+			If a continuous function $ \Phi : [t_0,t_1]\rightarrow \mathbb{R} $ is such that \[ \int_{t_0}^{t_1} \Phi(t)\eta(t)\,dt = 0 \] for all $ C^1 $ functions $ \eta : [t_0,t_1]\rightarrow \mathbb{R} $ with $ \eta(t_0)=\eta(t_1)=0 $, then  $ \Phi(t) \equiv 0  $.
+			\label{fc:FLCV}
+		\end{Fact}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Euler equation: an informal derivation}
+		Applying Fact \ref{fc:FLCV}, we obtain \begin{equation}
+			F'_x(t,x(t),\dot{x}(t)) - \frac{d}{dt}F'_{\dot{x}}(t,x(t),\dot{x}(t)) = 0.
+			\label{eq:Euler}
+		\end{equation}
+		
+		This differential equation is the celebrated \emph{Euler equation}.\bigskip
+		
+		\textbf{Note:} The Euler equation is sometimes called the Euler-Lagrange equation. Here we stick to the shorter name.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{More on the Euler equation}
+		\begin{itemize}
+			\item The Euler equation is a second-order differential equation.
+			\item Sometimes it is written in abbreviated form as \[ F'_x = \frac{d}{dt}F'_{\dot{x}}. \]
+			\item However, it may be more instructive to write it out in full:
+			\[ \begin{split}
+				F'_x(t,x(t),\dot{x}(t)) = & F''_{t\dot{x}}(t,x(t),\dot{x}(t))+ F''_{x\dot{x}}(t,x(t),\dot{x}(t))\dot{x}(t)+\\
+				& F''_{\dot{x}\dot{x}}(t,x(t),\dot{x}(t))\ddot{x}(t).
+			\end{split}  \]
+			\item As indicated, the Euler equation provides NCs for optimality of variational problems.
+			\item However, using it to obtain extremals can be more complicated since finding a solution does not involve a standard initial-value (Cauchy) problem for an ODE. Instead, the conditions are imposed on both ends of the interval on which the solution is to be determined. Such problems are called \emph{boundary value problems}.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Boundary value problems}
+		\begin{itemize}
+			\item An initial value problem for a second-order differential equation has the general form
+			\[ F(\ddot{x},\dot{x},x,t)=0, \quad x(t_0)=x_0,~\dot{x}(t_0)=x_1.  \]
+			\item The conditions on the unknown function are imposed at one point -- the initial point $ t_0 $ -- hence the name.
+			\item A boundary value problem is more flexible and can have different types of conditions. In our case it has the form 
+			\[ F(\ddot{x},\dot{x},x,t)=0, \quad x(t_0)=x_0,~x(t_1)=x_1.  \]
+			\item The important element is that the conditions are imposed at different points, the boundaries of the interval $ t_0 $ and $ t_1 $.
+			\item A boundary value problem admits more diverse situations, including no solutions, a finite number of solutions or an infinity of solutions.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A sufficiency condition}
+		The following fact is useful to establish that an extremal maximizes or minimizes the objective functional:
+		\begin{Fact}
+			If $ F(t,x,\dot{x}) $ is concave (convex) in $ (x,\dot{x}) $, then an admissible $ x^*(t) $ that satisfies the Euler equation yields a maximum (minimum) of the variational problem.
+			\label{fc:SCs}
+		\end{Fact}
+	\end{frame}
+	
+\end{section}
+\begin{section}{Examples}\label{sec:Ex}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}
+		\begin{exmpl}
+			Find the extremals of the functional \[ \int_0^1 \left((\dot{x}(t))^2 +12 t x(t) \right) \,dt, \quad x(0)=0,~x(1)=1.\] \bigskip
+			
+			To solve the problem, we compute $ F'_x = 12t $, $ F'_{\dot{x}} = 2 \dot{x}(t) $ and $ \frac{d}{dt}F'_{\dot{x}} = 2 \ddot{x}(t) $. The Euler equation is therefore \[ 12t - 2 \ddot{x}(t) = 0\quad \Rightarrow \quad  \ddot{x}(t) - 6t = 0.\]
+			
+			This is equivalent to  \[ \ddot{x}(t) = 6t. \] 
+			\label{ex:ex1}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			We can solve the last equation as follows:
+			\[ \ddot{x}(t) = 6t \quad \Leftrightarrow \quad \frac{d}{dt}\dot{x}(t) = 6t \quad \Rightarrow \quad \int \frac{d}{dt}\dot{x}(t) \,dt = \int 6t \,dt \quad \Rightarrow  \]
+			\[ \dot{x}(t) = 3t^2 + C_1 \quad \Rightarrow \quad \int \dot{x}(t) \,dt = \int(3t^2 + C_1)\,dt \quad \Rightarrow \]
+			\[ x(t) = t^3 + C_1 t + C_2 .\]
+			
+			From the boundary conditions \[ x(0)=0  \quad \Rightarrow \quad C_2 = 0. \]
+			\[ x(1)=1   \quad \Rightarrow \quad 1 = 1^3 + C_1 \cdot 1+ 0\quad \Rightarrow \quad C_1 = 0.\]
+			
+			Thus, the only possible extremal is \[ x(t)=t^3. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}
+		\begin{exmpl}
+			Let the state of the economy (e.g. measured by real output) be $ y(t) $ and let there be a target level denoted by $ \hat{y} $. A planner is trying to steer the economy towards the target level over a time interval $ [0,T] $. 
+			
+			The planner can control the rate of change $ \dot{y}(t) $ via a control $ u(t) $, so that $ \dot{y}(t)=u(t) $. Deviation form the target is undesirable but using the control is costly, with a cost measure $ c $, which gives rise to a trade-off. Thus, the planner seeks to minimize 
+			\[ \int_{0}^{T}\left( (y(t)-\hat{y})^2 + c (u(t))^2 \right)\,dt \] for a given starting position $ y(0)=y_0 $ and terminal requirement $ y(T)=\hat{y} $.
+			\label{ex:ex2}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			It is convenient to reformulate the problem by defining the deviation from target $ x(t):= y(t)-\hat{y} $. Clearly, $ \dot{x}(t) = \dot{y}(t) $. We also have $ x(0)=y_0-\hat{y} =: x_0 $ and $ x(T) = 0 $. The problem then becomes one of finding the minimum of 
+			\[ \int_{0}^{T}\left( x(t)^2 + c (\dot{x}(t))^2 \right)\,dt, \quad x(0)=x_0,~x(T)=0. \]\bigskip
+			
+			To write the Euler equation for the problem, we compute (omitting the dependence on $ t $) \[ F'_x = 2x,\quad F'_{\dot{x}} = 2c\dot{x},\quad \frac{d}{dt}F'_{\dot{x}}=2c\ddot{x}. \] \[ 2x - 2c\ddot{x} = 0 \quad\Rightarrow\quad \ddot{x} - \dfrac{1}{c}x = 0. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Recall that the general solution of $ \ddot{x}+a\dot{x}+bx=0 $ depends on the roots of the characteristic equation $ r^2+ar+b=0 $ as follows (SHSS, p.229):
+			\begin{itemize}
+				\item[(I)] If $ \frac{1}{4}a^2-b>0 $, when there are two distinct real roots, then \[ x=Ae^{r_1t}+B e^{r_2t}, \text{ where } r_{1,2}=-\frac{1}{2}a\pm \sqrt{\frac{1}{4}a^2 - b} \]
+				\item[(II)] If $ \frac{1}{4}a^2-b=0 $, when there is a double real root, then
+				\[ x = (A+Bt)e^{rt},\text{ where } r=-\dfrac{1}{2}a \]
+				\item[(III)] If $ \frac{1}{4}a^2-b<0 $, when there are no real roots, then 
+				\[ x=e^{\alpha t}(A \cos \beta t + B \sin \beta t), \quad \alpha = -\dfrac{1}{2}a,~\beta =  \sqrt{b-\dfrac{1}{4}a^2}\]
+			\end{itemize}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Applying the last result to $ \ddot{x} - \dfrac{1}{c}x = 0 $, we verify that the discriminant is positive, $ r_{1,2}=\pm\frac{1}{\sqrt{c}} $ and the solution therefore has the form \[ x(t)=A e^{rt}+B e^{-rt},\quad r=\frac{1}{\sqrt{c}}. \]
+			
+			To determine the constants $ A $ and $ B $, we use the boundary conditions. They yield \[ A + B = x_0, \quad A e^{rT}+B e^{-rT} = 0. \]
+			
+			Solving this system of two equations for $ A $ and $ B $, we obtain \[ A = -x_0 \dfrac{e^{-rT}}{e^{rT}-e^{-rT}},\quad B = x_0 \dfrac{e^{rT}}{e^{rT}-e^{-rT}}. \] 
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Examples}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Substituting the result for $ A $ and $ B $ in the formula for $ x(t) $, we obtain the solution \[ x(t) = \dfrac{x_0}{e^{rT}-e^{-rT}}\left( e^{r(T-t)}-e^{-r(T-t)}\right). \]\bigskip
+			
+			Since $ x^2 + c \dot{x}^2 $ is convex in $ (x,\dot{x}) $, the solution $ x(t) $ minimizes the objective functional.
+		\end{exmpl}
+	\end{frame}
+	
+	%\begin{frame}[fragile]
+	%\frametitle{Homework problems}
+	%\textbf{Homework:} Find the Euler equations for the functionals \[ J_1(x)=\int_{t_0}^{t_1} \left(2tx+3x\dot{x}+t(\dot{x})^2\right)\,dt, \]
+	%\[ J_2(x)=\int_{t_0}^{t_1} \left( x^2 + \dot{x}^2+2xe^t \right)\,dt. \]\bigskip
+	%
+	%\textbf{Homework:} Show that the solution to the problem \[ \int_{t_0}^{t_1} \sqrt{1-\dot{x}^2}\,dt \rightarrow \min \qquad \text{ s.t. }\qquad x(t_0)=\alpha,~x(t_1)=\beta\] is a straight line and determine its equation.
+	%\end{frame}
+	
+	
+\end{section}
+\begin{section}{Isoperimetric variational problems}\label{sec:Isoper}
+	
+	\begin{frame}[fragile]
+		\frametitle{The basic isoperimetric problem}
+		Isoperimetric problems historically derive their name from the geometric problem of finding a figure with maximal area for a given perimeter. Today the term is used to describe a wide range of variational problems subject to constraints.\bigskip
+		
+		In its simplest form, an isoperimetric variational problem is to find an extremum of the functional \[ \int_{t_0}^{t_1} F(t,x,\dot{x})\,dt \]
+		s.t. \[ \int_{t_0}^{t_1} F_i(t,x,\dot{x})\,dt = l_i,\quad i=1,\ldots,m, \] 
+		where $ l_i $ are given constants and \[ x(t_0)=x_0,\quad x(t_1)=x_1. \]
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Solving the basic isoperimetric problem}
+		The solution recipe for the isoperimetric problem is the following:
+		\begin{block}{Algorithm}
+			\begin{enumerate}
+				\item Form the auxiliary functional \[ \int_{t_0}^{t_1}\left( F(t,x,\dot{x}) + \sum_{i=1}^{m}\lambda_i F_i(t,x,\dot{x})  \right)\,dt, \] where $ \lambda_i $ are constants.
+				\item Write the Euler equation for it.
+				\item Use the isoperimetric conditions $ \int_{t_0}^{t_1} F_i(t,x,\dot{x})\,dt = l_i $ and the boundary conditions $ x(t_i)=x_i,~i=0,1 $, to determine the constants in the equation and $ \lambda_i $.
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Solving the basic isoperimetric problem}
+		\framesubtitle{Remarks}
+		\begin{itemize}
+			\item As a shortcut for step 1) of the algorithm, form directly the Lagrangian \[ \mathfrak{L} = F(t,x,\dot{x}) + \sum_{i=1}^{m}\lambda_i F_i(t,x,\dot{x}) . \] Then write the Euler equation for it as \[ \dfrac{\partial \mathfrak{L}}{\partial x}+\dfrac{d}{dt}\dfrac{\partial \mathfrak{L}}{\partial \dot{x}}=0. \]
+			\item There are more complex formulations of the isoperimetric problem involving several unknown functions (see the Elsgolts book), i.e. \[ \int_{t_0}^{t_1} F(t,x_1,\ldots,x_n,\dot{x}_1,\ldots,\dot{x}_n)\,dt \]
+			s.t. \[ \int_{t_0}^{t_1} F_j(t,x_1,\ldots,x_n,\dot{x}_1,\ldots,\dot{x}_n)\,dt = l_j,\quad j=1,\ldots,m, \] 
+			\[ x_i(t_0)=x_{i,0},\quad x_i(t_1)=x_{i,1}, \quad i=1,\ldots,n. \]
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Solving the basic isoperimetric problem}
+		\framesubtitle{Remarks}
+		\begin{itemize}
+			\item The algorithm provides necessary conditions, as evidenced by the use of the Euler equation.
+			\item Whether the candidates are minimizing or maximizing extremals (if at all) should be established separately.
+			\item This depends on the structure of the problem e.g. concavity or convexity of the objective functional.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Example: Optimal distribution for a continuous aggregator}
+		\framesubtitle{}
+		Consider the problem  \begin{equation*} 
+			\left| \begin{array}{l}
+				\min_{c(j)}~ \int_0^1 p(j) c(j) dj  \\{}\\
+				\int_0^1c(j)^{\frac{\theta-1}{\theta}}dj = C^{\frac{\theta-1}{\theta}}
+			\end{array} ,
+			\right.
+		\end{equation*} where $p(j)>0$ are given prices, and $\theta>1$ and $C>0$ are constants.\bigskip
+		
+		The solution $c(j)$ of this problem is given by the formula \[ c(j)=\left( \frac{p(j) }{P} \right)^{-\theta} C, \] with $P := \left( \int_0^1 p(j)^{1-\theta}
+		dj \right)^{\frac{1}{1-\theta}}.$ Also \[ \int_0^1
+		p(j) c(j) dj = P C. \]
+	\end{frame}
+	
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Example: Optimal distribution for a continuous aggregator}
+		\framesubtitle{}
+		We set up
+		\[ \mathfrak{L}=p(j)c(j)+\lambda
+		c(j)^{\frac{\theta-1}{\theta}}. \] The Euler equation becomes $\partial \mathfrak{L}/\partial c = 0$, which takes the form
+		\[ p(j)+ \lambda \frac{\theta-1}{\theta}
+		c(j)^{-\frac{1}{\theta}}=0. \]
+		Therefore, \[ p(j) = \left( -\lambda \frac{\theta-1}{\theta}
+		\right) c(j)^{-\frac{1}{\theta}}, \] so \begin{equation}\label{eq:AppxFOC1}
+			c(j) = \left( -\lambda
+			\frac{\theta-1}{\theta} \right)^\theta p(j)^{-\theta}.
+		\end{equation}
+	\end{frame}
+	
+	
+	
+	\begin{frame}[fragile]
+		\frametitle{Example: Optimal distribution for a continuous aggregator}
+		\framesubtitle{}
+		Substitute this into the isoperimetric constraint
+		\[ \left( -\lambda \frac{\theta-1}{\theta} \right)^{\theta-1}\int_0^1 p(j)^{1-\theta} dj =
+		C^{\frac{\theta-1}{\theta}},\] i.e. \[ \left( -\lambda \frac{\theta-1}{\theta} \right) P^{-1} = C^{\frac{1}{\theta}}. \]
+		
+		Then \eqref{eq:AppxFOC1} implies
+		\[ c(j)=\left(PC^{\frac{1}{\theta}}\right)^\theta p(j)^{-\theta}=\left( \frac{p(j)}{P} \right)^{-\theta}C . \]
+		
+		Finally, we verify that \begin{equation*}  \int_0^1 p(j)c(j)dj =  \int_0^1 p(j) p(j)^{-\theta} P^\theta C dj =   C P^\theta
+			P^{1-\theta} = PC.  \end{equation*}
+	\end{frame}
+		
+\end{section}
+
+\begin{frame}[fragile]
+	\frametitle{Readings}
+	Main references:
+	
+	Elsgolts. \emph{Differential equations and the calculus of variations}. Chapters 6 and 9.\bigskip
+	
+	Additional readings:
+	
+	Syds\ae{}ter et al. [SHSS] \emph{Further mathematics for economic analysis}. Chapter 8.
+	
+\end{frame}
+
+\end{document}
