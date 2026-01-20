@@ -1,0 +1,659 @@
+% !TeX spellcheck = en_GB
+\documentclass[10pt,usenames,dvipsnames]{beamer}
+\usetheme{CambridgeUS}
+%\usetheme{Boadilla}
+\definecolor{myred}{RGB}{163,0,0}
+%\usecolortheme[named=`blue]{structure}
+\usecolortheme{dove}
+\usefonttheme[]{professionalfonts}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest,compat/show suggested version=false}
+\usetikzlibrary{matrix,overlay-beamer-styles,arrows,shapes,calc,backgrounds}
+\usepackage{bm}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{verbatim}
+\usepackage{paratype}
+\usepackage{mathpazo}
+\usepackage{listings}
+\usepackage{csvsimple}
+
+\newcommand{\cov}{\mathsf{cov}}
+\newcommand{\corr}{\mathsf{corr}}
+\newcommand{\var}{\mathsf{Var}}
+\newcommand{\plim}{\mathrm{plim\ }}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\Est}{\mathsf{Est.Var}}
+\newcommand{\Asy}{\mathsf{Asy.Var}}
+\newcommand{\Esta}{\mathsf{Est.Asy.Var}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Prob}{\mathrm{Prob}}
+\newcommand{\Med}{\mathsf{Med}}
+\newcommand{\rank}{\mathsf{rank}}
+\newcommand{\argmin}{\mathsf{arg\,min}}
+
+\newcommand{\cc}[1]{\texttt{\textcolor{blue}{#1}}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+
+% Number theorem environments
+\setbeamertemplate{theorem}[ams style]
+\setbeamertemplate{theorems}[numbered]
+
+% Reset theorem-like environments so that each is numbered separately
+%\usepackage{etoolbox}
+%\undef{\definition}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\newtheorem{Fact}{\translate{Fact}}
+\theoremstyle{definition}
+\newtheorem{defn}{\translate{Definition}}
+\newtheorem{exmpl}{\translate{Example}}
+
+\definecolor{ttcolor}{RGB}{0,0,1}%{RGB}{163,0,0}
+\definecolor{mygray}{RGB}{248,249,250}
+
+% Change colours for theorem-like environments
+\definecolor{mygreen1}{RGB}{0,96,0}
+\definecolor{mygreen2}{RGB}{229,239,229}
+\setbeamercolor{block title}{fg=white,bg=mygreen1}
+\setbeamercolor{block body}{fg=black,bg=mygreen2}
+
+\lstdefinestyle{numbers}{numbers=left, stepnumber=1, numberstyle=\tiny, numbersep=10pt}
+\lstdefinestyle{MyFrame}{backgroundcolor=\color{yellow},frame=shadowbox}
+
+\lstdefinestyle{rstyle}%
+{language=R,
+	basicstyle=\footnotesize\ttfamily,
+	backgroundcolor = \color{mygray},
+	commentstyle=\slshape\color{green!50!black},
+	keywordstyle=\bfseries\color{blue!50!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+	%escapechar=\#,
+	rulecolor = \color{mygray}, 
+	showstringspaces = false,
+	showtabs = false,
+	tabsize = 2,
+	emphstyle=\color{red},
+	frame = single} 
+
+\setbeamertemplate{navigation symbols}{}
+
+\lstset{language=R,frame=single}
+
+\AtBeginSection{\frame{\sectionpage}}
+
+% Remove Section 1, Section 2, etc. as titles in section pages
+\defbeamertemplate{section page}{mine}[1][]{%
+	\begin{centering}
+		{\usebeamerfont{section name}\usebeamercolor[fg]{section name}#1}
+		\vskip1em\par
+		\begin{beamercolorbox}[sep=12pt,center]{part title}
+			\usebeamerfont{section title}\insertsection\par
+		\end{beamercolorbox}
+	\end{centering}
+} 
+
+\setbeamertemplate{section page}[mine]  
+
+\hypersetup{colorlinks, urlcolor=blue, linkcolor = myred} 
+
+\title{R406: Applied Economic Modelling with Python}
+\subtitle{\textcolor{myred}{Deterministic Optimal Control in Continuous Time: The Finite Horizon Case}}
+\author[Andrey Vassilev]{Andrey Vassilev}
+
+\date{} 
+
+\begin{document}
+\maketitle
+
+\begin{frame}[fragile]
+\frametitle{Lecture Contents}
+\tableofcontents
+\end{frame}
+
+
+\begin{section}{Introduction to optimal control}\label{sec:intr}
+	
+	\begin{frame}[fragile]
+		\frametitle{From calculus of variations to optimal control}
+		\begin{itemize}\itemsep1em
+			\item We are already familiar with the basic variational problem
+			\[ \max_{x(t)} \left(\min_{x(t)}\right) \int_{t_0}^{t_1}F(t,x,\dot{x})\,dt, \qquad x(t_0)=x_0,~x(t_1)=x_1. \]
+			\item It involved choosing directly the function $ x(t) $. Sometimes this is precisely the object we are interested in and we are happy to work with it directly.
+			\item In many economic situations, however, we are unable to change the variables of interest directly but only through changing other variables.
+			\item The calculus of variations setup is less suitable for handling this case and some modifications are required.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{From calculus of variations to optimal control}
+		\begin{itemize}\itemsep1em
+			\item The modifications lead to the class of \emph{optimal control} problems.
+			\item There are different formulations of optimal control problems with varying levels of complexity but the basic ingredients are as follows.
+			\item The variables that can be changed directly are called \emph{control variables} or \emph{controls} (we can control the evolution of the system through them).
+			\item The variables that can be influenced only indirectly, via the controls, are called \emph{state variables} or simply \emph{states}. In standard formulations the state variables are described by differential or difference equations (depending on whether time is discrete or continuous) featuring the controls.
+			\item Similar to the calculus of variations setup, the objective functional is typically in integral or series form and involves the states and the controls.
+		\end{itemize}\bigskip
+		
+		\textbf{Note:} In this lecture we shall study the continuous time case.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{From calculus of variations to optimal control}
+		\begin{itemize}\itemsep1em
+			\item Optimal control problems usually have constraints on the controls and, in more involved cases, constraints on the state variables or on functions of both the controls and the state variables.
+			\item Sometimes state variables may be required to lie in a certain set at the end of the horizon.
+			\item The horizon of an optimal control problem -- i.e. the interval on which the respective functions are defined and over which we seek a solution -- may be finite or infinite.
+			\item In the finite horizon case the objective functional may have an additional term capturing the state of the system at the end of the horizon.
+		\end{itemize} \bigskip \pause
+		
+		\alert{We now turn to making these descriptions precise.}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A basic optimal control problem}
+		\begin{itemize}\itemsep1em
+			\item Time is continuous and finite, represented by the interval $ [0,T] $.
+			\item The state of the system at time $ t \in [0,T] $ is described by means of $ n $ variables and is denoted by $ x(t)\in \mathbb{R}^n $.
+			\item There are $ m $ control variables, denoted $ u(t)\in \mathbb{R}^m $ at time $ t $. 
+			\item Usually controls at time $ t $ are constrained to lie in some set: $ u(t)\in \Omega (t) \subset \mathbb{R}^m $. Controls are assumed to be piecewise continuous.
+			\item The state of the system at time $ 0 $ is given: $ x(0)=x_0 $.
+			\item For a fixed admissible control $ u(t),~t\in [0,T] $, the evolution of the system is described by the (vector) differential equation (\emph{state equation})  \begin{equation}
+				\dot{x}(t)=f(x(t),u(t),t),\qquad x(0)=x_0.
+				\label{eq:state}
+			\end{equation} The function $ f $ is assumed to be continuously differentiable.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A basic optimal control problem}
+		\begin{itemize}\itemsep1em
+			\item The objective functional to be optimized takes the form \begin{equation}
+				J = \int_{0}^{T}F(x(t),u(t),t)\,dt + S[x(T),T].
+				\label{eq:objF}
+			\end{equation}
+			\item The literature differs on what the functions $ F $ and $ S $ should be called. Depending on the problem, $ F $ may be called ``instantaneous utility'', ``instantaneous profit'' or ``running cost'', while $ S $ may be called ``scrap value'', ``salvage value'' or ``terminal cost''.
+			\item In any case, the idea is that we would like to measure \textcolor{red}{running performance} (as captured by the integral term) but also take into account the \textcolor{blue}{final state of the system} (as captured by the salvage value).
+			\item The functions $ F $ and $ S $ are also assumed continuously differentiable.
+			\item For the sake of brevity, we shall be working with the problem of maximizing the functional \eqref{eq:objF}.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A basic optimal control problem}
+		The basic optimal control problem is 
+		\begin{equation}
+			\begin{split}
+				& \max_{u(t)} J = \int_{0}^{T}F(x(t),u(t),t)\,dt + S(x(T),T) \\
+				&\text{s.t.}\\
+				& u(t)\in \Omega(t) ,\\
+				& \dot{x}(t)=f(x(t),u(t),t),\qquad x(0)=x_0.
+			\end{split}
+			\label{eq:basicOC}
+		\end{equation}\bigskip
+		
+		An admissible control $ u^*(t) $ that solves problem \eqref{eq:basicOC} is called an \emph{optimal control}. The associated solution of the state equation $ x^*(t) $ is called the \emph{optimal trajectory} or the \emph{optimal path}.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{A basic optimal control problem}
+		\begin{itemize}\itemsep1em
+			\item When the optimal control problem is formulated using the functional \eqref{eq:objF}, it is said to be in \emph{Bolza form}.
+			\item In the special case when $ S\equiv 0 $, i.e. there is no salvage value, the problem is said to be in \emph{Lagrange form}.
+			\item In the special case when $ F\equiv 0 $, i.e. there is no measure of running performance, the problem is said to be in \emph{Mayer form}. If in addition $ S $ is linear in $ x(T) $, i.e. $ J=c x(T) $, the problem is said to be in \emph{linear Mayer form}.
+		\end{itemize}\bigskip\pause
+		
+		\alert{It can be shown that all these forms can be converted to linear Mayer form (see ST, Chapter 2).}
+	\end{frame}
+\end{section}
+
+\begin{section}{The maximum principle}\label{sec:max}
+	
+	\begin{frame}[fragile]
+		\frametitle{General comments}
+		\begin{itemize}\itemsep1em
+			\item We now turn to stating optimality conditions for problem \eqref{eq:basicOC}.
+			\item There are two general approaches: via Pontryagin's maximum principle and via Hamilton-Jacobi-Bellman equations.
+			\item Here we'll follow the first one as it is generally more tractable and is widely used in economic applications.
+			\item Using the maximum principle has the added benefit of being similar in spirit to the familiar Lagrangian approaches. 
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The Hamiltonian}
+		
+		We now introduce an object similar to the Lagrangian, which is called the Hamiltonian for the optimal control problem.\bigskip
+		
+		The Hamiltonian is defined as
+		\begin{equation}
+			\begin{split}
+				H(x,u,\lambda,t) =& F(x,u,t)+\lambda' f(x,u,t) \\
+				=&  F(x,u,t)+\sum_{i=1}^{n}\lambda_i f_i(x,u,t).
+			\end{split}
+			\label{eq:Hamilt}
+		\end{equation}\bigskip
+		
+		The variables $ \lambda_i $ are called the \emph{costate variables} or \emph{adjoint variables}.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Necessary conditions for optimality}
+		We can find candidates for optimality using the following procedure.
+		
+		\begin{block}{Algorithm (The maximum principle)}
+			\begin{enumerate}
+				\item Form the Hamiltonian \eqref{eq:Hamilt} for the problem.
+				\item Maximize the Hamiltonian w.r.t. $ u $, i.e. find $ u^*(t) $ such that
+				\[ H(x^*(t),u^*(t),\lambda(t),t)\geq  H(x^*(t),u(t),\lambda(t),t),\quad \forall u(t)\in \Omega(t),~t \in[0,T]. \]
+				\item Compute the adjoint equations together with the terminal boundary conditions:
+				\[ \dot{\lambda} = -\nabla_x H(x^*,u^*,\lambda,t),\quad \lambda(T)=\nabla_x S(x^*(T),T).  \]
+				\item Solve the two-point boundary value problem (TPBVP) comprising the adjoint equations and terminal boundary conditions from step (3), and the state equations \[ \dot{x}^* = f(x^*,u^*,t), \quad x^*(0)=x_0. \]
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Comments on the maximum principle}
+		\begin{itemize}\itemsep1em
+			\item Working with the Hamiltonian involves treating it as a function of four variables: $ x,u,\lambda,t $, without taking into account the dependence of $ x,u,\lambda $ on $ t $.
+			\item In many economic applications it turns out that the maximum is attained at an interior point of the set of feasible controls. The Hamiltonian maximization condition then takes the form \[ \nabla_u H = \mathbf{0}. \]
+			\item When it is unclear whether the maximum is attained at an interior point, a more general approach to solve the Hamiltonian maximization problem is called for.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Comments on the maximum principle}
+		\begin{itemize}\itemsep1em
+			\item Once we have found $ u^* $, we can substitute it in the adjoint and state equations to obtain the above-mentioned two-point boundary value problem:
+			\[ \begin{split}
+				&\dot{\lambda}  = - \nabla_x H(x^*,u^*,\lambda,t),\quad  \lambda(T)=\nabla_x S(x^*(T),T),\\
+				&\dot{x}^*  = f(x^*,u^*,t), \quad x^*(0)=x_0.
+			\end{split} \]
+			\item This is a system in $ 2n $ equations with $ n $ initial conditions (for the $ x $s)  and $ n $ terminal conditions (for the $ \lambda $s).
+			\item In realistic applications such a system is solved numerically.
+			\item The conditions $ \lambda(T)=\nabla_x S(x^*(T),T) $ are known as the \emph{transversality conditions}.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\begin{exmpl}
+			Find the NCs for the problem
+			\[ \max \int_{0}^{T}(1-tx(t)-u(t)^2)\,dt \]
+			s.t. \[ \dot{x}(t)=u(t),\quad x(0)=x_0,~u(t)\in \mathbb{R}. \]\bigskip \pause
+			
+			To solve the problem, we set up the Hamiltonian:
+			\[ H = 1-t x - u^2 + \lambda u .\]
+			
+			Because of the form of the Hamiltonian (what is it?), its maximum can be found via \[ \dfrac{\partial H}{\partial u} = -2u+\lambda = 0 \quad \Rightarrow \quad u^* = \dfrac{\lambda}{2}. \]
+			\label{ex:simpleOC}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Since $ \partial H/\partial x = -t $, we obtain \[ \dot{\lambda} = t \quad \Rightarrow \quad \lambda (t) = \dfrac{1}{2}t^2 + C_1. \]
+			
+			For this example the salvage value is $ S \equiv 0 $, thus the transversality condition takes the form $ \lambda(T) = 0 $.
+			
+			This can be used to compute $ C_1 $:
+			\[ \lambda (T) = \dfrac{1}{2}T^2 + C_1 = 0 \quad \Rightarrow \quad C_1 =-\dfrac{1}{2}T^2. \]
+			
+			Therefore, we have \[ \lambda (t) = \dfrac{1}{2}t^2-\dfrac{1}{2}T^2. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			The state equation takes the form \[ \dot{x} = \frac{1}{2}\left(\frac{1}{2}t^2 + C_1 \right). \]
+			
+			Integrating, we obtain \[ \begin{split}
+				x(t) & = \int \dfrac{1}{4}t^2 \,dt + \int \dfrac{1}{2}C_1\,dt \quad
+				= \quad  \dfrac{1}{4\cdot 3}t^3 - \dfrac{1}{2}\dfrac{T^2}{2}t + C_2\\
+				& =  \dfrac{1}{12}t^3 - \dfrac{T^2}{4}t + C_2.
+			\end{split}   \]
+			
+			Since $ x(0)=x_0 $, we get $ C_2 = x_0 $ and 
+			\[ x^*(t) = \dfrac{1}{12}t^3 - \dfrac{T^2}{4}t + x_0. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\begin{exmpl}
+			Find the NCs for the problem
+			\[ \max \int_{0}^{1}-x\,dt \]
+			s.t. \[ \dot{x}=u,\quad x(0)=1,~u\in \Omega = [-1,1]. \]\bigskip \pause
+			
+			The Hamiltonian is
+			\[ H = -x + \lambda u .\]\bigskip \pause
+			
+			\textcolor{red}{As the Hamiltonian is linear w.r.t. the control, its maximum will in general be attained at a corner point of the feasible set $ \Omega $.}
+			\label{ex:bangbang}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Thus, the solution for $ u $ will depend on the sign of the adjoint variable $ \lambda $ as follows:
+			\[ u^* = \left\{\begin{array}{cll}
+				1 &\text{ for }&\lambda>0,\\
+				-1 &\text{ for }&\lambda<0,\\
+				\text{can take any value in }\Omega&\text{ for }&\lambda=0.
+			\end{array}\right. \]\bigskip
+			
+			\alert{Controls that switch between the bounds of the feasible set are known as \emph{bang-bang controls}.}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			We have $ \partial H/\partial x = -1 $, and hence the adjoint equation is \[ \dot{\lambda} = 1 \quad \Rightarrow \quad \lambda (t) = t + C_1. \]
+			
+			In this example $ S\equiv 0 $, leading to the transversality condition \[ \lambda(1)=0. \]
+			
+			The transversality condition in turn implies that $ 0=1+C_1 $, thus $ C_1=-1 $ and \[ \lambda(t)=t-1. \]
+			
+			Since $ t\in [0,1] $, it follows that $ \lambda(t)\leq 0 $. More precisely, this implies that $ u^*(t)=-1 $ for $ t\in[0,1) $. As $ u^* $ is undetermined for $ \lambda = 0 $, we can choose to define it to be $ -1 $ when $ t=1 $.
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			With $ u^*(t)=-1,~t\in[0,1] $, we have \[ \dot{x}=-1 \quad \Rightarrow \quad x(t) = -t+C_2. \]
+			
+			We can then determine $ C_2 $ from the initial condition $ x(0)=1 $: \[ 1=0+C_2 \quad \Rightarrow \quad C_2 = 1.\]
+			
+			We arrive at the solution of the state equation \[ x^*(t)=1-t. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\begin{exmpl}
+			Consider a consumer with a planning horizon $ T $ and initial wealth $ w(0)=w_0>0 $, who wants to maximize time-discounted utility from consumption $ c(t) $. The consumer finances consumption out of wealth, discounting future utility with a discount factor $ \rho > 0 $, and the stock of wealth earns an interest at the rate $ r>0 $. The consumer also values the residual wealth that will be left at the end of his planning horizon.\bigskip \pause
+			
+			The above can be formalized by means of an optimal control problem as follows:
+			\[ \max_{c(t)}\int_{0}^{T}e^{-\rho t}\ln c(t)\,dt + \xi e^{-\rho T}\ln w(T) \qquad (\xi>0)\]
+			s.t. \[ \dot{w}(t)=rw(t)-c(t),\qquad w(0)=w_0. \]
+			\label{ex:OptC}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			The Hamiltonian\ for the problem is 
+			\[ H = e^{-\rho t}\ln c+\lambda (rw-c). \]
+			
+			\textbf{Note:} It can be shown using alternative arguments that the optimal $ c(t) $ and $ w(T) $ are positive, so the logarithms are well-defined and we can apply the maximum principle. Here we take it for granted.\bigskip
+			
+			The Hamiltonian maximization condition then takes the form \[ \dfrac{\partial H}{\partial c} = e^{-\rho t}\dfrac{1}{c}-\lambda = 0 \quad \Rightarrow \quad c = \dfrac{e^{-\rho t}}{\lambda}.\]
+			
+			Since $ \partial H / \partial w  = r\lambda$, we obtain the adjoint equation \[ \dot{\lambda} = -r\lambda. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			%\textbf{Homework:} Show that the solution of the adjoint equation is given by \[ \lambda(t)=\lambda_0 e^{-rt}. \]\bigskip
+			
+			The transversality condition $ \lambda(T)=S'_x(w(T),T) $ takes the form \[ \lambda(T) = \xi e^{-\rho T}\dfrac{1}{w(T)}. \]
+			
+			Combining the transversality condition with the solution of the adjoint equation, we get \[ \lambda_0 e^{-rT} = \xi e^{-\rho T}\dfrac{1}{w(T)} \quad \Rightarrow \quad \lambda_0 = \dfrac{\xi e^{-(\rho-r)T}}{w(T)}. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Therefore \[ \lambda(t)=\dfrac{\xi e^{-(\rho-r)T}}{w(T)} e^{-rt} \] and \[ c(t) = \dfrac{e^{-\rho t}}{\lambda_0 e^{-rt}} = \dfrac{w(T)}{\xi}e^{(\rho-r)(T-t)}.  \]\bigskip
+			
+			The equation $ \dot{w} - rw = -c $ is a first-order linear differential equation with variable right-hand side. Its solution, after substituting the expression for $ c(t) $, is 
+			\[ w(t) = w_0 e^{rt} + \dfrac{w(T)}{\xi \rho}e^{(\rho-r)T}\left( e^{(r-\rho)t}-e^{rt} \right). \]
+			
+			%\textbf{Homework:} Using the results from SHSS, p. 202, verify the last assertion.
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			Note that the expression for $ w(t) $ is not entirely clean, since it is self-referential --- the variable $ w(t) $ depends on the terminal value of wealth $ w(T) $. This is a consequence of the transversality condition and is actually the two-point boundary value problem in somewhat disguised form. Thus, we need to determine $ w(T) $. \bigskip
+			
+			To this end, we evaluate the expression for $ w(t) $ at $ t=T $ to obtain
+			\[ w(T) = w_0 e^{rT} + \dfrac{w(T)}{\xi \rho}e^{(\rho-r)T}\left( e^{(r-\rho)T}-e^{rT} \right). \]
+			
+			Solving for $ w(T) $ and simplifying, we obtain (verify it!):
+			\[ w(T) = \dfrac{\xi \rho e^{rT}}{\xi \rho + e^{\rho T}-1}w_0. \]
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{The maximum principle in action}
+		\addtocounter{exmpl}{-1}
+		\begin{exmpl}[cont.]
+			\begin{itemize}\itemsep1em
+				\item Now $ w(T) $ is expressed as a function of the model parameters only. 
+				\item Consequently, we have a proper solution for $ w(t) $.
+				\item Similarly, the formulae for $ c(t) $ and $ \lambda(t) $ become functions of the model parameters and time.
+				\item Note that the costate variable retains the familiar interpretation of a shadow price, generalised here to a dynamic setting.
+				\item By virtue of having a salvage value term in the problem, we end with positive terminal wealth. Without the salvage value, it would not be optimal to leave any wealth behind.
+			\end{itemize}
+		\end{exmpl}
+	\end{frame}
+	
+\end{section}
+
+\begin{section}{Miscellaneous info on optimal control problems and the maximum principle}\label{sec:misc}
+	
+	\begin{frame}[fragile]
+		\frametitle{Present-value vs. current-value Hamiltonians}
+		\begin{itemize}
+			\item Example \ref{ex:OptC} presents a common formulation in dynamic economic problems: an objective functional with discounting.
+			\item As we saw, applying the maximum principle to such problems involves cumbersome manipulations of the discount factor.
+			\item This suggests a simplification of the maximum principle for such problems.
+		\end{itemize}\bigskip
+		
+		The common structure we have is the following:
+		\begin{equation*}
+			\begin{split}
+				& \max_{u(t)} J = \int_{0}^{T}e^{-\rho t}\phi(x(t),u(t))\,dt + e^{-\rho T}\sigma (x(T)) \\
+				&\text{s.t.}\\
+				& u(t)\in \Omega(t) ,\\
+				& \dot{x}(t)=f(x(t),u(t),t),\qquad x(0)=x_0.
+			\end{split}
+		\end{equation*}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Present-value vs. current-value Hamiltonians}
+		The familiar Hamiltonian is \[  H = e^{-\rho t}\phi(x,u) + \lambda' f(x,u,t) . \]
+		
+		Because of the discounting it is sometimes called the present-value Hamiltonian.\bigskip
+		
+		Instead of working with the present-value Hamiltonian, one approach would be to define a transformed Hamiltonian as follows:
+		\[ H^c := e^{\rho t}H = \phi (x,u)+ \underbrace{e^{\rho t} \lambda'}_{=:~ \lambda^{c \prime}} f(x,u,t), \] with $ \lambda^c $ being the current-value adjoint variables.
+		
+		Since $ e^{\rho t} > 0 $, maximizing $ H $ w.r.t. $ u $ would be equivalent to maximizing $ H^c $ w.r.t. $ u $.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Present-value vs. current-value Hamiltonians}
+		The standard adjoint equation is $ \dot{\lambda} = -\nabla_x H =  -e^{-\rho t}\nabla_x\phi(x,u) - \lambda'  \nabla_x f(x,u,t) $.\bigskip
+		
+		Multiplying this by $ e^{\rho t} $, we obtain \[  e^{\rho t} \dot{\lambda} =- \nabla_x \phi(x,u) - \lambda^{c \prime} \nabla_x f(x,u,t) \quad \left(=-\nabla_x H^c\right). \]
+		
+		From the definition of the current-value adjoint variables $ \lambda^c = e^{\rho t} \lambda $, we compute \[ \dot{\lambda}^c = \rho e^{\rho t} \lambda + e^{\rho t} \dot{\lambda} \quad \Leftrightarrow \quad  \dot{\lambda}^c - \rho \lambda^c = e^{\rho t} \dot{\lambda}. \]
+		
+		Substituting the expression for $ e^{\rho t} \dot{\lambda} $ in the transformed adjoint equation, we arrive at \[ \dot{\lambda}^c = \rho \lambda^c - \nabla_x H^c . \]
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Present-value vs. current-value Hamiltonians}
+		Finally, the standard transversality condition $ \lambda(T) = e^{-\rho T} \nabla \sigma(x(T)) $ can be replaced by the transformed transversality condition 
+		\[ \lambda^c (T) = \nabla \sigma (x(T)) . \] \bigskip \pause
+		
+		To summarise, problems with discounting of the form stated above can be approached using a current-value formulation in the following manner:
+		\begin{enumerate}
+			\item Form the current-value Hamiltonian $ H^c $.
+			\item Maximize $ H^c $ w.r.t. $ u\in \Omega(t) $.
+			\item Construct the modified adjoint equations 
+			\[ \dot{\lambda}^c = \rho \lambda^c - \nabla_x H^c \] and compute the transversality condition \[ \lambda^c (T) = \nabla\sigma (x(T)) . \]
+			\item Solve the corresponding TPBVP.
+		\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Sufficiency}
+		We can obtain sufficient conditions for optimality by strengthening the maximum principle in the familiar manner with additional concavity assumptions:
+		
+		\begin{Fact}
+			Let $ u^*(t) $ and the corresponding $ x^*(t) $ and $ \lambda(t) $ satisfy the maximum principle for $ t\in [0,T] $. Suppose also that $ H(x,u^*(t),\lambda (t),t) $ is concave in $ x $ for all $ t $ and $ S(x,T) $ is concave in $ x $. 
+			
+			Then $ u^*(t) $ is an optimal control for the problem \eqref{eq:basicOC}.
+			\label{fc:SCs}
+		\end{Fact}\bigskip
+		
+		\textbf{Note:} Essentially the same result is valid in the case of a current-value formulation. See Theorem 10.1.6 in SHSS for details.
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Sufficiency}
+		\begin{exmpl}[Example \ref{ex:simpleOC} revisited]
+			The Hamiltonian of the problem in Example \ref{ex:simpleOC} was \[ H = 1-tx-u^2+\lambda u. \] Irrespective of $ u $, $ \lambda $ and $ t $, it is linear (and hence concave) in $ x $. There is no salvage value term to consider.
+			
+			Then the requirements of Fact \ref{fc:SCs} are fulfilled and the solution obtained is the optimal solution.
+			\label{ex:SCsimpleOC}
+		\end{exmpl}
+		
+		\begin{exmpl}[Example \ref{ex:bangbang} revisited]
+			The Hamiltonian of the problem in Example \ref{ex:bangbang} is again linear in $ x $ irrespective of the other variables and there is no salvage value term to consider.
+			
+			The situation is analogous to that of Example \ref{ex:SCsimpleOC} in that the requirements of Fact \ref{fc:SCs} are fulfilled and the optimality of the solution is guaranteed.
+			\label{ex:SCbangbang}
+		\end{exmpl}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{End-constrained optimal control problems}
+		It is possible to have optimal control problems which have no salvage value term but instead impose end-point constraints on the state variables. The formulation of such problems is the following: 
+		
+		\begin{equation}
+			\begin{split}
+				& \max_{u(t)} J = \int_{0}^{T}F(x(t),u(t),t)\,dt  \\
+				&\text{s.t.}\\
+				& u(t)\in \Omega(t) ,\\
+				& \dot{x}(t)=f(x(t),u(t),t),\qquad x(0)=x_0,\\
+				& x_i(T) = x^1_i,\qquad i=1,\ldots,l,\\
+				& x_i(T) \geq x^1_i,\qquad i=l+1,\ldots,k,\\
+				& x_i(T) \text{ free},\qquad i=k+1,\ldots,n.\\
+			\end{split}
+			\label{eq:endconstrOC}
+		\end{equation}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{End-constrained optimal control problems}
+		The modification of the maximum principle for the end-constrained problem \eqref{eq:endconstrOC} is given by the following algorithm:
+		
+		\begin{block}{Algorithm (The maximum principle for end-constrained problems)}
+			\begin{enumerate}
+				\item Form the Hamiltonian for the problem.
+				\item Maximize the Hamiltonian w.r.t. $ u \in \Omega(t) $.
+				\item Compute the adjoint equations $ \dot{\lambda} = -\nabla_x H(x^*,u^*,\lambda,t) $.
+				\item Compute the transversality conditions:
+				\begin{equation*}
+					\begin{array}{ll}
+						\lambda_i(T) \text{ -- no condition},& i=1,\ldots,l,\\
+						\lambda_i(T) \geq 0~\left(\lambda_i(T) = 0 \text{ if } x^*_i(T) > x^1_i\right),& i=l+1,\ldots,k,\\
+						\lambda_i(T)=0 ,& i=k+1,\ldots,n.\\
+					\end{array}
+				\end{equation*}
+				\item Solve the TPBVP comprising the adjoint equations, transversality conditions, and the state equations  $ \dot{x}^* = f(x^*,u^*,t), \quad x^*(0)=x_0 $. 
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Calculus of variations problems as optimal control problems}
+		We are now in a position to show that the basic variational problem can be represented and solved as an optimal control problem. \bigskip
+		
+		Consider the variational problem of maximizing the functional \begin{equation*}
+			\int_{0}^{T} F(t,x,\dot{x})\,dt,\quad x(0)=x_0, ~x(T)=x_1.
+		\end{equation*}\bigskip
+		
+		We can use the substitution $ u = \dot{x} $. The problem then becomes one of maximizing \begin{equation*}
+			\int_{0}^{T} F(t,x,u)\,dt.
+		\end{equation*}
+		s.t. \[ \dot{x}=u,\quad x(0)=x_0, ~x(T)=x_1. \]
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Calculus of variations problems as optimal control problems}
+		The reformulated problem is an end-constrained optimal control problem (up to an immaterial reordering of the positions of the respective variables to conform to the original variational formulation).
+		
+		The Hamiltonian is \[ H=F(t,x,u)+\lambda u. \]
+		
+		The maximization condition w.r.t. $ u $ yields \[ \nabla_u H = F'_{\dot{x}}(t,x,u)+\lambda = 0. \]
+		This can further be differentiated w.r.t. $ t $ to get \begin{equation}\label{eq:E1}
+			\frac{d}{dt}F'_{\dot{x}}(t,x,u)+\dot{\lambda} = 0.\tag{$ \star $}
+		\end{equation} 
+	\end{frame}
+	
+	\begin{frame}[fragile]
+		\frametitle{Calculus of variations problems as optimal control problems}
+		We also have $ \nabla_x H = F'_x(t,x,u) $, leading to the adjoint equation \begin{equation}\label{eq:E2}
+			\dot{\lambda} = -F'_x(t,x,u).\tag{$ \star \star$}
+		\end{equation}  
+		
+		The transversality condition for $ \lambda $ in this case merely states that $ \lambda(T) $ is unrestricted.
+		
+		Combining \eqref{eq:E1} and \eqref{eq:E2}, multiplying by $ -1 $ and substituting back $ \dot{x} $ for $ u $, we obtain \[ F'_x(t,x,\dot{x})-\frac{d}{dt}F'_{\dot{x}}(t,x,\dot{x}) = 0. \]
+		
+		This is the familiar Euler equation from calculus of variations.\bigskip
+		
+		\textbf{Note:} While we studied variational problems in the simplest univariate case, the above formulation and computations directly carry over to the multivariate case even without modifying the notation, showing how one can obtain a system of Euler equations.
+	\end{frame}
+	
+\end{section}
+
+
+%\begin{frame}[fragile]
+%\frametitle{Homework problems}
+%\textbf{Homework:} Derive and solve the NCs for the problem \[ \max_{u(t)\in \mathbb{R}}\int_{0}^{2}[e^t x(t)-u(t)^2]\,dt \] s.t. \[ \dot{x}(t)=-u(t),\quad x(0) = 0. \] \bigskip
+%
+%\textbf{Homework:} Derive and solve the NCs for the problem \[ \max_{u(t)\in \mathbb{R}}\int_{0}^{1}[x(t)+u(t)^2]\,dt \] s.t. \[ \dot{x}(t)=-u(t),\quad x(0) = 0. \]
+%\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Readings}
+	Main references:
+	
+	Sethi and Thompson [ST]. \emph{Optimal control theory: applications to management science and economics}. Chapters 1 and 2.\bigskip
+	
+	Additional readings:
+	
+	Syds\ae{}ter et al. [SHSS] \emph{Further mathematics for economic analysis}. Chapters 9 and 10.
+\end{frame}
+
+\end{document}
